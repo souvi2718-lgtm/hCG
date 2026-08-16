@@ -1,659 +1,229 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport"
-      content="width=device-width,
-      initial-scale=1.0,
-      maximum-scale=5.0,
-      user-scalable=yes">
-
-<meta name="theme-color"
-      content="#1976d2">
+      content="width=device-width,initial-scale=1.0,user-scalable=yes">
 
 <title>فحص الحمل الذكي</title>
 
 <style>
-
 *{
     box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
 }
 
-html,
 body{
     margin:0;
-    padding:0;
-    width:100%;
-    min-height:100%;
-}
-
-body{
-
-    font-family:
-    Tahoma,
-    Arial,
-    sans-serif;
-
-    background:#f3f6fa;
-
+    font-family:Tahoma,Arial,sans-serif;
+    background:#f4f7fb;
     color:#222;
-
 }
 
 header{
-
-    background:
-    linear-gradient(
-        135deg,
-        #1976d2,
-        #0d47a1
-    );
-
+    background:#1976d2;
     color:white;
-
     text-align:center;
-
-    padding:22px 15px;
-
-    box-shadow:
-    0 3px 10px
-    rgba(0,0,0,.20);
-
+    padding:20px 10px;
+    box-shadow:0 2px 8px #aaa;
 }
 
 header h1{
-
     margin:0;
-
     font-size:25px;
-
 }
 
 header p{
-
     margin:8px 0 0;
-
     font-size:14px;
-
-    opacity:.95;
-
 }
 
 .container{
-
-    width:100%;
-
-    max-width:700px;
-
+    max-width:600px;
     margin:auto;
-
     padding:15px;
-
 }
 
 .card{
-
-    background:#fff;
-
-    border-radius:18px;
-
+    background:white;
+    border-radius:15px;
     padding:18px;
-
-    margin-bottom:16px;
-
-    box-shadow:
-    0 3px 15px
-    rgba(0,0,0,.08);
-
-}
-
-.card h2{
-
-    margin-top:0;
-
-    font-size:20px;
-
-}
-
-.info{
-
-    background:#e3f2fd;
-
-    border-right:
-    5px solid #1976d2;
-
-    border-radius:10px;
-
-    padding:13px;
-
-    line-height:1.8;
-
-    font-size:14px;
-
     margin-bottom:15px;
-
-}
-
-.warning{
-
-    background:#fff3cd;
-
-    border-right:
-    5px solid #ff9800;
-
-    border-radius:10px;
-
-    padding:13px;
-
-    line-height:1.8;
-
-    font-size:13px;
-
-    margin-top:15px;
-
+    box-shadow:0 3px 12px rgba(0,0,0,.10);
 }
 
 button{
-
     width:100%;
-
-    border:none;
-
-    border-radius:13px;
-
+    border:0;
+    border-radius:12px;
     padding:15px;
-
     margin-top:10px;
-
-    font-family:inherit;
-
     font-size:17px;
-
     font-weight:bold;
-
     cursor:pointer;
-
-    transition:
-    transform .1s,
-    opacity .2s;
-
 }
 
-button:active{
+.camera{
+    background:#1976d2;
+    color:white;
+}
 
-    transform:scale(.98);
+.gallery{
+    background:#455a64;
+    color:white;
+}
 
+.analyze{
+    background:#00897b;
+    color:white;
+}
+
+.reset{
+    background:#e53935;
+    color:white;
 }
 
 button:disabled{
-
-    opacity:.45;
-
-    cursor:not-allowed;
-
-}
-
-.btn-camera{
-
-    background:#1976d2;
-
-    color:white;
-
-}
-
-.btn-gallery{
-
-    background:#455a64;
-
-    color:white;
-
-}
-
-.btn-analyze{
-
-    background:#00897b;
-
-    color:white;
-
-}
-
-.btn-reset{
-
-    background:#e53935;
-
-    color:white;
-
-}
-
-.btn-secondary{
-
-    background:#eeeeee;
-
-    color:#333;
-
+    opacity:.5;
 }
 
 input[type=file]{
-
     display:none;
-
-}
-
-.preview-box{
-
-    position:relative;
-
-    width:100%;
-
-    min-height:180px;
-
-    margin-top:15px;
-
-    border-radius:15px;
-
-    overflow:hidden;
-
-    background:#eceff1;
-
-    display:none;
-
 }
 
 #preview{
-
-    display:block;
-
     width:100%;
-
-    max-height:500px;
-
+    max-height:400px;
     object-fit:contain;
-
-}
-
-.preview-label{
-
-    position:absolute;
-
-    top:10px;
-
-    right:10px;
-
-    background:
-    rgba(0,0,0,.65);
-
-    color:white;
-
-    padding:6px 10px;
-
-    border-radius:8px;
-
-    font-size:12px;
-
+    border-radius:12px;
+    display:none;
+    background:#eee;
+    margin-top:15px;
 }
 
 #canvas{
-
     display:none;
-
-}
-
-.loading{
-
-    display:none;
-
-    text-align:center;
-
-    padding:20px 10px;
-
-}
-
-.spinner{
-
-    width:42px;
-
-    height:42px;
-
-    margin:auto;
-
-    border-radius:50%;
-
-    border:
-    4px solid #ddd;
-
-    border-top-color:
-    #1976d2;
-
-    animation:
-    spin .8s linear infinite;
-
-}
-
-@keyframes spin{
-
-    to{
-        transform:rotate(360deg);
-    }
-
 }
 
 .result{
-
     display:none;
-
-    margin-top:18px;
-
-    border-radius:16px;
-
-    padding:20px;
-
     text-align:center;
-
+    padding:20px;
+    border-radius:15px;
+    margin-top:15px;
 }
 
 .result h2{
-
     margin-top:0;
-
-    font-size:23px;
-
 }
 
-.result-positive{
-
+.positive{
     background:#ffebee;
-
-    border:
-    2px solid #e53935;
-
+    border:2px solid #e53935;
     color:#b71c1c;
-
 }
 
-.result-negative{
-
+.negative{
     background:#e8f5e9;
-
-    border:
-    2px solid #43a047;
-
+    border:2px solid #43a047;
     color:#1b5e20;
-
 }
 
-.result-invalid{
-
+.invalid{
     background:#fff3e0;
-
-    border:
-    2px solid #fb8c00;
-
+    border:2px solid #fb8c00;
     color:#e65100;
-
 }
 
-.result-unclear{
-
-    background:#fffde7;
-
-    border:
-    2px solid #f9a825;
-
-    color:#6d4c41;
-
+.unclear{
+    background:#fff8e1;
+    border:2px solid #f9a825;
+    color:#795548;
 }
 
-.confidence{
-
-    margin-top:15px;
-
-    background:white;
-
-    border-radius:12px;
-
+.info{
+    background:#e3f2fd;
+    border-right:5px solid #1976d2;
     padding:12px;
-
-    color:#333;
-
-}
-
-.confidence-bar{
-
-    width:100%;
-
-    height:12px;
-
-    background:#ddd;
-
-    border-radius:20px;
-
-    overflow:hidden;
-
-    margin-top:8px;
-
-}
-
-.confidence-fill{
-
-    width:0%;
-
-    height:100%;
-
-    background:#1976d2;
-
-    transition:
-    width .5s;
-
-}
-
-.lines-preview{
-
-    margin-top:15px;
-
-    background:white;
-
-    border-radius:12px;
-
-    padding:12px;
-
-    color:#333;
-
-}
-
-.line-row{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    padding:8px;
-
-    border-bottom:1px solid #eee;
-
-}
-
-.line-row:last-child{
-
-    border-bottom:none;
-
-}
-
-.line-indicator{
-
-    width:15px;
-
-    height:15px;
-
-    border-radius:50%;
-
-    display:inline-block;
-
-    margin-left:6px;
-
-}
-
-.detected{
-
-    background:#43a047;
-
-}
-
-.not-detected{
-
-    background:#bdbdbd;
-
+    border-radius:8px;
+    font-size:14px;
+    line-height:1.8;
 }
 
 .history-item{
-
-    padding:14px 5px;
-
-    border-bottom:
-    1px solid #e0e0e0;
-
+    border-bottom:1px solid #ddd;
+    padding:12px 5px;
 }
 
 .history-item:last-child{
-
-    border-bottom:none;
-
+    border-bottom:0;
 }
 
-.history-date{
-
+.date{
     color:#777;
-
     font-size:12px;
-
-    margin-top:5px;
-
 }
 
-.history-status{
-
+.status{
     font-weight:bold;
-
     margin-top:5px;
-
 }
 
-.empty{
-
-    text-align:center;
-
-    color:#777;
-
-    padding:20px 5px;
-
-}
-
-.footer{
-
-    text-align:center;
-
-    color:#777;
-
-    font-size:12px;
-
+.small{
+    font-size:13px;
+    color:#666;
     line-height:1.8;
-
-    padding:10px;
-
 }
 
+.loader{
+    display:none;
+    text-align:center;
+    padding:15px;
+}
+
+.spinner{
+    width:35px;
+    height:35px;
+    border:4px solid #ddd;
+    border-top-color:#1976d2;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:auto;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
 </style>
-
 </head>
-
 
 <body>
 
-
 <header>
-
     <h1>🧪 فحص الحمل الذكي</h1>
-
-    <p>
-        تحليل صورة اختبار الحمل المنزلي
-    </p>
-
+    <p>تحليل صورة اختبار الحمل المنزلي</p>
 </header>
 
-
 <div class="container">
-
-
-    <!-- معلومات الاستخدام -->
 
     <div class="card">
 
         <div class="info">
-
-            <b>📌 طريقة الاستخدام</b>
-
-            <br>
-
-            1. استخدمي اختبار حمل منزلي حقيقي.
-
-            <br>
-
-            2. انتظري المدة المحددة في تعليمات الاختبار.
-
-            <br>
-
-            3. صوري الشريط في إضاءة جيدة.
-
-            <br>
-
-            4. اجعلي شريط الاختبار ظاهرًا بالكامل.
-
+            <b>طريقة الاستخدام:</b><br>
+            استخدمي اختبار حمل منزلي حقيقي أولًا، ثم صوّري شريط الاختبار
+            في إضاءة جيدة وضعية مستقيمة.
         </div>
 
-
-        <div class="warning">
-
-            ⚠️ التطبيق لا يستطيع اكتشاف الحمل من
-            كاميرا الهاتف وحدها. التحليل يعتمد على
-            قراءة صورة اختبار حمل حقيقي.
-
-        </div>
-
-    </div>
-
-
-
-    <!-- اختيار الصورة -->
-
-    <div class="card">
-
-        <h2>
-            📷 تصوير الاختبار
-        </h2>
-
-
-        <button
-            class="btn-camera"
-            onclick="openCamera()">
-
-            📷 فتح الكاميرا
-
+        <button class="camera"
+                onclick="openCamera()">
+            📷 تصوير اختبار الحمل
         </button>
 
-
-        <button
-            class="btn-gallery"
-            onclick="openGallery()">
-
+        <button class="gallery"
+                onclick="openGallery()">
             🖼️ اختيار صورة من الهاتف
-
         </button>
-
 
         <input
             id="cameraInput"
@@ -662,537 +232,236 @@ input[type=file]{
             capture="environment"
             onchange="loadImage(event)">
 
-
         <input
             id="galleryInput"
             type="file"
             accept="image/*"
             onchange="loadImage(event)">
 
-
-        <!-- معاينة -->
-
-        <div
-            id="previewBox"
-            class="preview-box">
-
-            <span
-                class="preview-label">
-
-                صورة الاختبار
-
-            </span>
-
-            <img
-                id="preview"
-                alt="صورة اختبار الحمل">
-
-        </div>
-
+        <img id="preview">
 
         <button
             id="analyzeButton"
-            class="btn-analyze"
-            onclick="startAnalysis()"
+            class="analyze"
+            onclick="analyzeTest()"
             disabled>
-
-            🔍 تحليل الصورة
-
+            🔍 تحليل الاختبار
         </button>
-
 
         <button
-            class="btn-reset"
+            class="reset"
             onclick="resetTest()">
-
             🔄 اختبار جديد
-
         </button>
 
-    </div>
-
-
-
-    <!-- التحميل -->
-
-    <div
-        id="loading"
-        class="card loading">
-
-        <div class="spinner"></div>
-
-        <p>
-            جاري تحليل الصورة...
-        </p>
-
-        <p class="small">
-
-            يتم فحص الإضاءة ومنطقة الاختبار
-            وخطّي C و T
-
-        </p>
-
-    </div>
-
-
-
-    <!-- النتيجة -->
-
-    <div
-        id="result"
-        class="result">
-
-    </div>
-
-
-
-    <!-- سجل الفحوصات -->
-
-    <div class="card">
-
-        <h2>
-            📋 سجل الفحوصات
-        </h2>
-
-        <div id="history">
-
-            <div class="empty">
-
-                لا توجد فحوصات محفوظة.
-
-            </div>
-
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>جاري تحليل الصورة...</p>
         </div>
 
+        <canvas id="canvas"></canvas>
+
+        <div id="result" class="result"></div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>📋 سجل الفحوصات</h2>
+
+        <div id="history">
+            <p class="small">
+                لا توجد نتائج محفوظة.
+            </p>
+        </div>
 
         <button
-            class="btn-reset"
+            class="reset"
             onclick="clearHistory()">
-
-            🗑️ حذف سجل الفحوصات
-
+            🗑️ حذف السجل
         </button>
 
     </div>
 
 
-
-    <!-- معلومات -->
-
     <div class="card">
 
-        <h2>
-            ℹ️ معلومات مهمة
-        </h2>
+        <h2>ℹ️ معلومات مهمة</h2>
 
         <p class="small">
-
-            خط C هو خط التحكم في الاختبار.
-            عدم ظهوره يعني عادةً أن الاختبار غير صالح.
-
+            هذا التطبيق يقوم بتحليل صورة اختبار الحمل المنزلي فقط.
+            لا يستطيع الهاتف اكتشاف هرمون الحمل مباشرة.
         </p>
 
         <p class="small">
-
-            وجود C و T قد يشير إلى نتيجة إيجابية،
-            حتى إذا كان خط T خفيفًا، ويجب تأكيد النتيجة
-            وفق تعليمات الاختبار أو بواسطة اختبار طبي.
-
+            وجود خط التحكم C يعني عادةً أن الاختبار صالح.
+            ظهور خط إضافي في منطقة T قد يشير إلى نتيجة إيجابية،
+            حتى لو كان الخط خفيفًا، لكن يجب تأكيد النتيجة باختبار
+            طبي مناسب.
         </p>
 
         <p class="small">
-
-            اختلاف أنواع اختبارات الحمل وألوانها
-            وإضاءة الصورة قد يؤثر على التحليل.
-
+            إذا لم يظهر خط C فالاختبار غير صالح ويجب إعادة الاختبار
+            باختبار جديد.
         </p>
 
     </div>
 
-
 </div>
-
-
-<div class="footer">
-
-    فحص الحمل الذكي
-
-    <br>
-
-    أداة مساعدة لقراءة صورة الاختبار وليست
-    تشخيصًا طبيًا.
-
-</div>
-
-
-
-<!-- لوحة الرسم مخفية للتحليل -->
-
-<canvas id="canvas"></canvas>
 
 
 <script>
-
-/* =========================================
-   المتغيرات
-========================================= */
 
 let selectedImage = null;
 
-let originalImageData = null;
 
-let currentAnalysis = null;
-
-
-/* =========================================
-   فتح الكاميرا
-========================================= */
-
+/* فتح الكاميرا */
 function openCamera(){
 
-    const input =
-        document.getElementById(
-            "cameraInput"
-        );
-
-    input.value = "";
-
-    input.click();
+    document.getElementById("cameraInput").click();
 
 }
 
 
-/* =========================================
-   فتح معرض الصور
-========================================= */
-
+/* فتح معرض الصور */
 function openGallery(){
 
-    const input =
-        document.getElementById(
-            "galleryInput"
-        );
-
-    input.value = "";
-
-    input.click();
+    document.getElementById("galleryInput").click();
 
 }
 
 
-/* =========================================
-   تحميل الصورة
-========================================= */
-
+/* تحميل الصورة */
 function loadImage(event){
 
-    const file =
-        event.target.files[0];
+    const file = event.target.files[0];
 
     if(!file){
-
         return;
-
     }
 
+    const reader = new FileReader();
 
-    if(
-        !file.type ||
-        !file.type.startsWith("image/")
-    ){
+    reader.onload = function(e){
 
-        alert(
-            "يرجى اختيار صورة صحيحة."
-        );
+        selectedImage = new Image();
 
-        return;
-
-    }
-
-
-    const reader =
-        new FileReader();
-
-
-    reader.onload =
-    function(e){
-
-        const image =
-            new Image();
-
-
-        image.onload =
-        function(){
-
-            selectedImage =
-                image;
-
-
-            originalImageData =
-                e.target.result;
-
+        selectedImage.onload = function(){
 
             const preview =
-                document.getElementById(
-                    "preview"
-                );
+                document.getElementById("preview");
 
+            preview.src = e.target.result;
 
-            preview.src =
-                e.target.result;
+            preview.style.display = "block";
 
-
-            document.getElementById(
-                "previewBox"
-            ).style.display =
-                "block";
-
-
-            document.getElementById(
-                "analyzeButton"
-            ).disabled =
-                false;
-
-
-            document.getElementById(
-                "result"
-            ).style.display =
-                "none";
-
-
-            window.scrollTo({
-
-                top:
-                document.getElementById(
-                    "previewBox"
-                ).offsetTop - 20,
-
-                behavior:"smooth"
-
-            });
+            document.getElementById("analyzeButton")
+                .disabled = false;
 
         };
 
-
-        image.onerror =
-        function(){
-
-            alert(
-                "تعذر قراءة الصورة."
-            );
-
-        };
-
-
-        image.src =
-            e.target.result;
+        selectedImage.src = e.target.result;
 
     };
 
-
     reader.readAsDataURL(file);
-
 }
 
 
-/* =========================================
-   بدء التحليل
-========================================= */
+/*
+=================================================
+تحليل الصورة
+=================================================
+*/
 
-function startAnalysis(){
+function analyzeTest(){
 
     if(!selectedImage){
-
-        alert(
-            "يرجى اختيار صورة الاختبار أولاً."
-        );
-
+        alert("يرجى اختيار صورة الاختبار أولاً");
         return;
-
     }
 
+    const loader =
+        document.getElementById("loader");
 
-    document.getElementById(
-        "result"
-    ).style.display =
-        "none";
+    loader.style.display = "block";
 
-
-    document.getElementById(
-        "loading"
-    ).style.display =
-        "block";
+    document.getElementById("result")
+        .style.display = "none";
 
 
-    document.getElementById(
-        "analyzeButton"
-    ).disabled =
-        true;
+    setTimeout(function(){
 
+        try{
 
-    /*
-      سيتم تشغيل محرك التحليل
-      المتقدم في الجزء الثاني.
-    */
+            const result = detectLines(selectedImage);
 
-    setTimeout(
-        function(){
+            showResult(result);
 
-            try{
+        }catch(error){
 
-                currentAnalysis =
-                    advancedImageAnalysis(
-                        selectedImage
-                    );
+            showResult({
+                type:"unclear",
+                title:"النتيجة غير واضحة",
+                message:
+                "تعذر تحليل الصورة بشكل موثوق. يرجى التقاط صورة أوضح."
+            });
 
+        }
 
-                displayResult(
-                    currentAnalysis
-                );
+        loader.style.display = "none";
 
-
-            }catch(error){
-
-                console.error(error);
-
-
-                displayResult({
-
-                    type:"unclear",
-
-                    title:
-                    "تعذر تحليل الصورة",
-
-                    message:
-                    "الصورة غير مناسبة للتحليل. حاول التقاط صورة أوضح."
-
-                });
-
-            }
-
-
-            document.getElementById(
-                "loading"
-            ).style.display =
-                "none";
-
-
-            document.getElementById(
-                "analyzeButton"
-            ).disabled =
-                false;
-
-
-        },
-        700
-    );
+    },800);
 
 }
 
 
-/* =========================================
-   سيتم استبدال هذه الدالة في الجزء الثاني
-========================================= */
+/*
+=================================================
+خوارزمية تحليل الصورة
+=================================================
 
-<script>
+الفكرة:
 
-/* =========================================================
-   محرك تحليل اختبار الحمل
-   الإصدار المتقدم
-========================================================= */
+يتم البحث عن مناطق داكنة/ملونة
+على شريط الاختبار.
 
-function advancedImageAnalysis(image){
+هذه الخوارزمية تقريبية.
+*/
+
+function detectLines(img){
 
     const canvas =
         document.getElementById("canvas");
 
     const ctx =
-        canvas.getContext("2d", {
-            willReadFrequently:true
-        });
+        canvas.getContext("2d");
 
-
-    /* -----------------------------------------
-       1. تجهيز الصورة
-    ----------------------------------------- */
-
-    let originalWidth =
-        image.naturalWidth ||
-        image.width;
-
-    let originalHeight =
-        image.naturalHeight ||
-        image.height;
-
-
-    if(
-        !originalWidth ||
-        !originalHeight
-    ){
-
-        throw new Error(
-            "Invalid image dimensions"
-        );
-
-    }
+    let width = img.width;
+    let height = img.height;
 
 
     /*
-      تصغير الصور الكبيرة
-      حتى يعمل التطبيق بشكل جيد على الهاتف.
+    تصغير الصورة لتسهيل التحليل
     */
 
-    const MAX_SIZE = 1200;
+    const maxSize = 900;
 
-    let scale = 1;
+    if(width > maxSize){
 
+        const scale = maxSize / width;
 
-    if(
-        originalWidth > MAX_SIZE ||
-        originalHeight > MAX_SIZE
-    ){
-
-        scale =
-            Math.min(
-                MAX_SIZE / originalWidth,
-                MAX_SIZE / originalHeight
-            );
+        width = maxSize;
+        height = Math.round(height * scale);
 
     }
-
-
-    const width =
-        Math.max(
-            300,
-            Math.round(
-                originalWidth * scale
-            )
-        );
-
-
-    const height =
-        Math.max(
-            200,
-            Math.round(
-                originalHeight * scale
-            )
-        );
-
 
     canvas.width = width;
     canvas.height = height;
 
-
-    ctx.clearRect(
-        0,
-        0,
-        width,
-        height
-    );
-
-
     ctx.drawImage(
-        image,
+        img,
         0,
         0,
         width,
@@ -1200,851 +469,154 @@ function advancedImageAnalysis(image){
     );
 
 
-    const imageData =
+    const data =
         ctx.getImageData(
             0,
             0,
             width,
             height
-        );
-
-
-    const pixels =
-        imageData.data;
-
-
-    /* -----------------------------------------
-       2. تحليل جودة الصورة
-    ----------------------------------------- */
-
-    const quality =
-        calculateImageQuality(
-            pixels,
-            width,
-            height
-        );
+        ).data;
 
 
     /*
-      إذا كانت الصورة مظلمة جدًا أو مضيئة جدًا
-      نرفضها قبل التحليل.
+    نبحث عن منطقة الاختبار
+    في وسط الصورة تقريبًا.
     */
 
-    if(
-        quality.averageBrightness < 25 ||
-        quality.averageBrightness > 245
-    ){
+    const startY =
+        Math.floor(height * 0.25);
 
-        return {
+    const endY =
+        Math.floor(height * 0.75);
 
-            type:"unclear",
 
-            title:
-            "الصورة غير مناسبة",
+    let rows = [];
 
-            message:
-            "الإضاءة غير مناسبة للتحليل. التقط صورة جديدة في إضاءة متوسطة وواضحة.",
 
-            confidence:20,
-
-            lines:{
-                C:false,
-                T:false
-            }
-
-        };
-
-    }
-
-
-    /* -----------------------------------------
-       3. إنشاء صورة رمادية
-    ----------------------------------------- */
-
-    const gray =
-        createGrayImage(
-            pixels,
-            width,
-            height
-        );
-
-
-    /* -----------------------------------------
-       4. إزالة بعض الضوضاء
-    ----------------------------------------- */
-
-    const smooth =
-        blurGrayImage(
-            gray,
-            width,
-            height
-        );
-
-
-    /* -----------------------------------------
-       5. البحث عن منطقة اختبار محتملة
-    ----------------------------------------- */
-
-    const region =
-        findTestRegion(
-            smooth,
-            width,
-            height
-        );
-
-
-    if(!region){
-
-        return {
-
-            type:"unclear",
-
-            title:
-            "لم يتم العثور على شريط الاختبار",
-
-            message:
-            "ضع شريط اختبار الحمل بالكامل داخل الصورة، وحاول التصوير من الأعلى وفي إضاءة جيدة.",
-
-            confidence:15,
-
-            lines:{
-                C:false,
-                T:false
-            }
-
-        };
-
-    }
-
-
-    /* -----------------------------------------
-       6. تحليل خطوط المنطقة
-    ----------------------------------------- */
-
-    const lines =
-        analyzeTestRegion(
-            smooth,
-            width,
-            height,
-            region
-        );
-
-
-    /* -----------------------------------------
-       7. اتخاذ القرار
-    ----------------------------------------- */
-
-    return interpretLines(
-        lines,
-        quality
-    );
-
-}
-
-
-/* =========================================================
-   جودة الصورة
-========================================================= */
-
-function calculateImageQuality(
-    pixels,
-    width,
-    height
-){
-
-    let sum = 0;
-
-    let sumSq = 0;
-
-    let count = 0;
-
-
-    /*
-      نأخذ عينات بدل تحليل كل بكسل.
-    */
-
-    const step =
-        Math.max(
-            1,
-            Math.floor(
-                Math.sqrt(
-                    (width * height) /
-                    50000
-                )
-            )
-        );
-
-
-    for(
-        let y=0;
-        y<height;
-        y+=step
-    ){
-
-        for(
-            let x=0;
-            x<width;
-            x+=step
-        ){
-
-            const i =
-                (y * width + x) * 4;
-
-
-            const r =
-                pixels[i];
-
-            const g =
-                pixels[i+1];
-
-            const b =
-                pixels[i+2];
-
-
-            const value =
-                (
-                    0.299*r +
-                    0.587*g +
-                    0.114*b
-                );
-
-
-            sum += value;
-
-            sumSq +=
-                value * value;
-
-            count++;
-
-        }
-
-    }
-
-
-    const mean =
-        sum / Math.max(1,count);
-
-
-    const variance =
-        Math.max(
-            0,
-            (sumSq / Math.max(1,count))
-            -
-            (mean * mean)
-        );
-
-
-    const contrast =
-        Math.sqrt(
-            variance
-        );
-
-
-    return {
-
-        averageBrightness:
-        mean,
-
-        contrast:
-        contrast
-
-    };
-
-}
-
-
-/* =========================================================
-   تحويل إلى رمادي
-========================================================= */
-
-function createGrayImage(
-    pixels,
-    width,
-    height
-){
-
-    const gray =
-        new Float32Array(
-            width * height
-        );
-
-
-    for(
-        let y=0;
-        y<height;
-        y++
-    ){
-
-        for(
-            let x=0;
-            x<width;
-            x++
-        ){
-
-            const i =
-                (y * width + x) * 4;
-
-
-            const r =
-                pixels[i];
-
-            const g =
-                pixels[i+1];
-
-            const b =
-                pixels[i+2];
-
-
-            gray[
-                y * width + x
-            ] =
-                0.299*r +
-                0.587*g +
-                0.114*b;
-
-        }
-
-    }
-
-
-    return gray;
-
-}
-
-
-/* =========================================================
-   تنعيم الصورة
-========================================================= */
-
-function blurGrayImage(
-    gray,
-    width,
-    height
-){
-
-    const result =
-        new Float32Array(
-            width * height
-        );
-
-
-    /*
-      متوسط بسيط 3x3
-    */
-
-    for(
-        let y=1;
-        y<height-1;
-        y++
-    ){
-
-        for(
-            let x=1;
-            x<width-1;
-            x++
-        ){
-
-            let sum = 0;
-
-
-            sum +=
-                gray[
-                    (y-1)*width +
-                    (x-1)
-                ];
-
-            sum +=
-                gray[
-                    (y-1)*width +
-                    x
-                ];
-
-            sum +=
-                gray[
-                    (y-1)*width +
-                    (x+1)
-                ];
-
-
-            sum +=
-                gray[
-                    y*width +
-                    (x-1)
-                ];
-
-            sum +=
-                gray[
-                    y*width +
-                    x
-                ];
-
-            sum +=
-                gray[
-                    y*width +
-                    (x+1)
-                ];
-
-
-            sum +=
-                gray[
-                    (y+1)*width +
-                    (x-1)
-                ];
-
-            sum +=
-                gray[
-                    (y+1)*width +
-                    x
-                ];
-
-            sum +=
-                gray[
-                    (y+1)*width +
-                    (x+1)
-                ];
-
-
-            result[
-                y*width+x
-            ] =
-                sum / 9;
-
-        }
-
-    }
-
-
-    /*
-      حدود الصورة
-    */
-
-    for(
-        let x=0;
-        x<width;
-        x++
-    ){
-
-        result[x] =
-            gray[x];
-
-        result[
-            (height-1)*width+x
-        ] =
-            gray[
-                (height-1)*width+x
-            ];
-
-    }
-
-
-    for(
-        let y=0;
-        y<height;
-        y++
-    ){
-
-        result[
-            y*width
-        ] =
-            gray[
-                y*width
-            ];
-
-        result[
-            y*width+
-            width-1
-        ] =
-            gray[
-                y*width+
-                width-1
-            ];
-
-    }
-
-
-    return result;
-
-}
-
-
-/* =========================================================
-   البحث عن منطقة الاختبار
-========================================================= */
-
-function findTestRegion(
-    gray,
-    width,
-    height
-){
-
-    /*
-      نحاول أولًا العثور على منطقة أفقية
-      تحتوي على تغيرات واضحة.
-
-      الاختبار قد يكون في أي جزء من الصورة،
-      لذلك نقسم الصورة إلى شرائح.
-    */
-
-
-    const candidates = [];
-
-
-    const minY =
-        Math.floor(
-            height * 0.10
-        );
-
-
-    const maxY =
-        Math.floor(
-            height * 0.90
-        );
-
-
-    const bandHeight =
-        Math.max(
-            20,
-            Math.floor(
-                height * 0.08
-            )
-        );
-
-
-    for(
-        let y=minY;
-        y<maxY-bandHeight;
-        y+=5
-    ){
+    for(let y=startY; y<endY; y++){
 
         let darkness = 0;
-
-        let variation = 0;
-
         let count = 0;
 
 
         for(
-            let yy=y;
-            yy<y+bandHeight;
-            yy+=2
+            let x=Math.floor(width*0.15);
+            x<Math.floor(width*0.85);
+            x++
         ){
 
-            for(
-                let x=
-                    Math.floor(
-                        width*0.10
-                    );
+            const index =
+                (y * width + x) * 4;
 
-                x<
-                    Math.floor(
-                        width*0.90
-                    );
+            const r = data[index];
+            const g = data[index+1];
+            const b = data[index+2];
 
-                x+=4
-            ){
 
-                const value =
-                    gray[
-                        yy*width+x
-                    ];
+            const brightness =
+                (r + g + b) / 3;
 
 
-                darkness +=
-                    255-value;
+            /*
+            قيمة الظلام
+            */
 
-
-                /*
-                  قياس التغير المحلي
-                */
-
-                if(x>2){
-
-                    variation +=
-                        Math.abs(
-                            value -
-                            gray[
-                                yy*width+x-2
-                            ]
-                        );
-
-                }
-
-
-                count++;
-
-            }
-
-        }
-
-
-        const d =
-            darkness /
-            Math.max(1,count);
-
-
-        const v =
-            variation /
-            Math.max(1,count);
-
-
-        /*
-          نبحث عن منطقة ليست سوداء بالكامل
-          وليست بيضاء بالكامل، وفيها تغيرات.
-        */
-
-        if(
-            d > 5 &&
-            d < 180
-        ){
-
-            candidates.push({
-
-                y:y,
-
-                score:
-                    v +
-                    d*0.15
-
-            });
-
-        }
-
-    }
-
-
-    if(
-        candidates.length===0
-    ){
-
-        return null;
-
-    }
-
-
-    candidates.sort(
-        (a,b)=>
-            b.score-a.score
-    );
-
-
-    const best =
-        candidates[0];
-
-
-    /*
-      نأخذ منطقة واسعة نسبيًا
-      حول المرشح.
-    */
-
-    const regionHeight =
-        Math.floor(
-            height * 0.30
-        );
-
-
-    let top =
-        best.y -
-        Math.floor(
-            regionHeight/3
-        );
-
-
-    if(top<0){
-        top=0;
-    }
-
-
-    if(
-        top+regionHeight >
-        height
-    ){
-
-        top =
-            height-regionHeight;
-
-    }
-
-
-    return {
-
-        x:
-        Math.floor(
-            width*0.08
-        ),
-
-        y:top,
-
-        width:
-        Math.floor(
-            width*0.84
-        ),
-
-        height:
-        regionHeight
-
-    };
-
-}
-
-
-/* =========================================================
-   تحليل منطقة الاختبار
-========================================================= */
-
-function analyzeTestRegion(
-    gray,
-    width,
-    height,
-    region
-){
-
-    /*
-      نحسب متوسط شدة كل صف.
-
-      خطوط C و T غالبًا تكون خطوطًا
-      أفقية في شريط الاختبار.
-    */
-
-
-    const profiles = [];
-
-
-    const xStart =
-        region.x;
-
-
-    const xEnd =
-        Math.min(
-            width,
-            region.x +
-            region.width
-        );
-
-
-    const yStart =
-        region.y;
-
-
-    const yEnd =
-        Math.min(
-            height,
-            region.y +
-            region.height
-        );
-
-
-    for(
-        let y=yStart;
-        y<yEnd;
-        y++
-    ){
-
-        let sum=0;
-
-        let count=0;
-
-
-        for(
-            let x=xStart;
-            x<xEnd;
-            x+=2
-        ){
-
-            sum +=
-                gray[
-                    y*width+x
-                ];
+            darkness +=
+                255 - brightness;
 
             count++;
 
         }
 
 
-        const mean =
-            sum /
-            Math.max(
-                1,
-                count
-            );
-
-
-        profiles.push({
-
+        rows.push({
             y:y,
-
-            value:mean
-
+            value:darkness/count
         });
 
     }
 
 
     /*
-      إزالة الميل العام للإضاءة
+    العثور على المناطق الأكثر وضوحًا
     */
 
-    const normalized =
-        normalizeProfile(
-            profiles
-        );
-
-
-    /*
-      العثور على القمم الداكنة
-    */
-
-    const peaks =
-        findDarkPeaks(
-            normalized
-        );
-
-
-    /*
-      ترتيب الخطوط حسب الموقع.
-    */
-
-    peaks.sort(
-        (a,b)=>
-            a.y-b.y
+    rows.sort(
+        (a,b)=>b.value-a.value
     );
 
 
-    /*
-      نبحث عن أفضل خطين.
-    */
-
-    let selected = [];
+    let candidates = [];
 
 
-    for(
-        let i=0;
-        i<peaks.length;
-        i++
-    ){
+    for(let i=0;i<rows.length;i++){
 
-        let p =
-            peaks[i];
+        const row = rows[i];
 
 
-        let near =
-            selected.some(
-                q =>
-                Math.abs(
-                    q.y-p.y
-                ) < 12
-            );
+        let tooClose = candidates.some(
+            c => Math.abs(c.y-row.y)<15
+        );
 
 
-        if(!near){
+        if(!tooClose){
 
-            selected.push(p);
+            candidates.push(row);
 
         }
 
 
+        if(candidates.length>=5){
+            break;
+        }
+
+    }
+
+
+    candidates.sort(
+        (a,b)=>a.y-b.y
+    );
+
+
+    /*
+    حساب قوة الخطوط
+    */
+
+    if(candidates.length===0){
+
+        return {
+            type:"unclear",
+            title:"النتيجة غير واضحة",
+            message:
+            "لم يتم العثور على خطوط واضحة في الصورة."
+        };
+
+    }
+
+
+    /*
+    نعتبر أقوى خط هو C
+    والخط الآخر المحتمل هو T.
+    
+    هذه طريقة تقريبية وليست تشخيصًا.
+    */
+
+    let strongest =
+        candidates[0];
+
+    let second = null;
+
+
+    for(let i=1;i<candidates.length;i++){
+
         if(
-            selected.length>=4
+            Math.abs(
+                candidates[i].y -
+                strongest.y
+            ) > 20
         ){
+
+            second = candidates[i];
 
             break;
 
@@ -2054,1040 +626,167 @@ function analyzeTestRegion(
 
 
     /*
-      إذا وجدنا أكثر من خطين،
-      نختار الأقوى.
+    حد تقريبي لقوة الخط
     */
 
-    selected.sort(
-        (a,b)=>
-            b.strength-a.strength
-    );
+    const threshold = 28;
 
 
-    const strongest =
-        selected[0] || null;
+    const hasStrong =
+        strongest.value > threshold;
 
 
-    const second =
-        selected[1] || null;
+    const hasSecond =
+        second &&
+        second.value > threshold;
 
 
-    /*
-      ترتيب مكاني.
-    */
+    if(!hasStrong){
 
-    let line1 = null;
-
-    let line2 = null;
-
-
-    if(strongest){
-
-        if(
-            second &&
-            second.strength >
-            strongest.strength*0.20
-        ){
-
-            if(
-                strongest.y <
-                second.y
-            ){
-
-                line1 =
-                    strongest;
-
-                line2 =
-                    second;
-
-            }else{
-
-                line1 =
-                    second;
-
-                line2 =
-                    strongest;
-
-            }
-
-        }else{
-
-            line1 =
-                strongest;
-
-        }
+        return {
+            type:"invalid",
+            title:"الاختبار غير واضح",
+            message:
+            "لم يتم العثور على خط تحكم واضح. تأكد من جودة الصورة أو أعد الاختبار."
+        };
 
     }
 
 
-    /*
-      تحويل قوة الخط إلى درجة تقريبية.
-    */
+    if(hasSecond){
 
-    const cStrength =
-        line1
-        ?
-        line1.strength
-        :
-        0;
+        return {
+            type:"positive",
+            title:"إيجابي محتمل",
+            message:
+            "تم اكتشاف خطين محتملين في منطقة الاختبار. إذا ظهر خط C وخط T فعليًا، فقد تكون النتيجة إيجابية."
+        };
 
-
-    const tStrength =
-        line2
-        ?
-        line2.strength
-        :
-        0;
+    }
 
 
     return {
-
-        line1:line1,
-
-        line2:line2,
-
-        cStrength:cStrength,
-
-        tStrength:tStrength,
-
-        profile:normalized,
-
-        region:region
-
-    };
-
-}
-
-
-/* =========================================================
-   تطبيع البروفايل
-========================================================= */
-
-function normalizeProfile(
-    profiles
-){
-
-    const result = [];
-
-
-    /*
-      نحسب متوسط عام.
-    */
-
-    let average=0;
-
-
-    profiles.forEach(
-        p=>{
-            average += p.value;
-        }
-    );
-
-
-    average /=
-        Math.max(
-            1,
-            profiles.length
-        );
-
-
-    /*
-      نعطي كل نقطة مقدار اختلافها
-      عن المتوسط.
-
-      الرقم الأقل = أغمق.
-    */
-
-    profiles.forEach(
-        p=>{
-
-            result.push({
-
-                y:p.y,
-
-                value:p.value,
-
-                darkness:
-                    average-p.value
-
-            });
-
-        }
-    );
-
-
-    return result;
-
-}
-
-
-/* =========================================================
-   العثور على الخطوط
-========================================================= */
-
-function findDarkPeaks(
-    profile
-){
-
-    if(
-        !profile ||
-        profile.length<5
-    ){
-
-        return [];
-
-    }
-
-
-    const peaks=[];
-
-
-    /*
-      نبحث عن نقاط أغمق من الجوار.
-    */
-
-    for(
-        let i=2;
-        i<profile.length-2;
-        i++
-    ){
-
-        const p =
-            profile[i];
-
-
-        const left1 =
-            profile[i-1].darkness;
-
-        const left2 =
-            profile[i-2].darkness;
-
-        const right1 =
-            profile[i+1].darkness;
-
-        const right2 =
-            profile[i+2].darkness;
-
-
-        const localMaximum =
-            p.darkness >
-            left1 &&
-            p.darkness >=
-            right1 &&
-            p.darkness >
-            left2*.65 &&
-            p.darkness >
-            right2*.65;
-
-
-        if(
-            localMaximum &&
-            p.darkness > 3
-        ){
-
-            /*
-              تجميع عدة صفوف حول الخط.
-            */
-
-            let strength =
-                p.darkness;
-
-
-            let total =
-                p.darkness;
-
-
-            let count=1;
-
-
-            for(
-                let k=1;
-                k<=3;
-                k++
-            ){
-
-                if(
-                    profile[i-k]
-                ){
-
-                    total +=
-                        Math.max(
-                            0,
-                            profile[i-k]
-                                .darkness
-                        );
-
-                    count++;
-
-                }
-
-
-                if(
-                    profile[i+k]
-                ){
-
-                    total +=
-                        Math.max(
-                            0,
-                            profile[i+k]
-                                .darkness
-                        );
-
-                    count++;
-
-                }
-
-            }
-
-
-            strength =
-                total/count;
-
-
-            peaks.push({
-
-                y:p.y,
-
-                strength:
-                    strength
-
-            });
-
-        }
-
-    }
-
-
-    return peaks;
-
-}
-
-
-/* =========================================================
-   تفسير الخطوط
-========================================================= */
-
-function interpretLines(
-    lines,
-    quality
-){
-
-    /*
-      هذه القيم ليست قيمًا طبية.
-      هي فقط لتقييم جودة الصورة
-      وقوة الخط المكتشف.
-    */
-
-
-    const c =
-        lines.cStrength || 0;
-
-
-    const t =
-        lines.tStrength || 0;
-
-
-    /*
-      نحدد حدًا أدنى تقريبيًا.
-    */
-
-    const MIN_LINE =
-        5;
-
-
-    const hasC =
-        c >= MIN_LINE;
-
-
-    const hasT =
-        t >= MIN_LINE;
-
-
-    /*
-      إذا لم نجد C
-      فالاختبار غير صالح/غير واضح.
-    */
-
-    if(!hasC){
-
-        return {
-
-            type:
-            "invalid",
-
-            title:
-            "الاختبار غير صالح أو غير واضح",
-
-            message:
-            "لم يتمكن التحليل من تحديد خط التحكم C بوضوح. أعد تصوير الاختبار أو استخدم اختبارًا جديدًا.",
-
-            confidence:
-            calculateConfidence(
-                c,
-                t,
-                quality
-            ),
-
-            lines:{
-                C:false,
-                T:hasT
-            }
-
-        };
-
-    }
-
-
-    /*
-      وجود خط C وعدم وجود T.
-    */
-
-    if(
-        hasC &&
-        !hasT
-    ){
-
-        return {
-
-            type:
-            "negative",
-
-            title:
-            "سلبي محتمل",
-
-            message:
-            "تم اكتشاف خط تحكم C ولم يتم اكتشاف خط T بوضوح. وفقًا لطريقة قراءة الاختبار، قد تكون النتيجة سلبية.",
-
-            confidence:
-            calculateConfidence(
-                c,
-                t,
-                quality
-            ),
-
-            lines:{
-                C:true,
-                T:false
-            }
-
-        };
-
-    }
-
-
-    /*
-      وجود C و T.
-    */
-
-    if(
-        hasC &&
-        hasT
-    ){
-
-        /*
-          إذا كان T ضعيفًا جدًا،
-          نعرض أنها نتيجة إيجابية محتملة
-          مع ثقة أقل.
-        */
-
-        let message =
-            "تم اكتشاف خطي C و T محتملين. إذا كان الخطان ظاهرين ضمن الوقت المحدد في تعليمات الاختبار، فقد تكون النتيجة إيجابية.";
-
-
-        if(
-            t < c*0.30
-        ){
-
-            message =
-            "تم اكتشاف خط C وخط T خفيف محتمل. قد يشير الخط الخفيف إلى نتيجة إيجابية، لكن يجب تأكيدها باختبار آخر أو تحليل طبي.";
-
-        }
-
-
-        return {
-
-            type:
-            "positive",
-
-            title:
-            "إيجابي محتمل",
-
-            message:
-            message,
-
-            confidence:
-            calculateConfidence(
-                c,
-                t,
-                quality
-            ),
-
-            lines:{
-                C:true,
-                T:true
-            }
-
-        };
-
-    }
-
-
-    /*
-      حالة احتياطية.
-    */
-
-    return {
-
-        type:
-        "unclear",
-
-        title:
-        "النتيجة غير واضحة",
-
+        type:"negative",
+        title:"سلبي محتمل",
         message:
-        "لم يتمكن التطبيق من تحليل الخطوط بدرجة كافية. حاول التقاط صورة أوضح.",
-
-        confidence:25,
-
-        lines:{
-            C:false,
-            T:false
-        }
-
+        "تم اكتشاف خط واحد محتمل. إذا كان هذا هو خط C فقط، فالنتيجة سلبية وفقًا لطريقة قراءة الاختبار."
     };
 
 }
 
 
-/* =========================================================
-   حساب درجة الثقة البصرية
-========================================================= */
-
-function calculateConfidence(
-    c,
-    t,
-    quality
-){
-
-    /*
-      قوة خط C مهمة جدًا
-      لأن الاختبار يحتاج خط التحكم.
-    */
-
-    let score = 0;
-
-
-    /*
-      قوة C
-    */
-
-    score +=
-        Math.min(
-            45,
-            c*3
-        );
-
-
-    /*
-      قوة T
-    */
-
-    score +=
-        Math.min(
-            25,
-            t*2
-        );
-
-
-    /*
-      التباين
-    */
-
-    score +=
-        Math.min(
-            20,
-            quality.contrast
-        );
-
-
-    /*
-      الإضاءة المناسبة
-    */
-
-    const brightness =
-        quality.averageBrightness;
-
-
-    if(
-        brightness >=70 &&
-        brightness <=220
-    ){
-
-        score += 10;
-
-    }
-
-
-    score =
-        Math.round(
-            Math.max(
-                0,
-                Math.min(
-                    100,
-                    score
-                )
-            )
-        );
-
-
-    return score;
-
-}
-
-
-/* =========================================================
-   أدوات إضافية للتطبيق
-========================================================= */
-
-
 /*
-  تحويل صورة Canvas إلى صورة
-  عند الحاجة للمعاينة.
+=================================================
+عرض النتيجة
+=================================================
 */
 
-function canvasToDataURL(){
-
-    const canvas =
-        document.getElementById(
-            "canvas"
-        );
-
-
-    return canvas.toDataURL(
-        "image/jpeg",
-        .90
-    );
-
-}
-
-
-/*
-  حساب شدة خط معين
-*/
-
-function measureLine(
-    gray,
-    width,
-    x1,
-    x2,
-    y
-){
-
-    if(
-        y<0 ||
-        y>=gray.length/width
-    ){
-
-        return 0;
-
-    }
-
-
-    let sum=0;
-
-    let count=0;
-
-
-    for(
-        let x=x1;
-        x<x2;
-        x++
-    ){
-
-        if(
-            x<0 ||
-            x>=width
-        ){
-
-            continue;
-
-        }
-
-
-        sum +=
-            gray[
-                y*width+x
-            ];
-
-        count++;
-
-    }
-
-
-    if(count===0){
-
-        return 0;
-
-    }
-
-
-    return 255 -
-        (sum/count);
-
-}
-
-
-/*
-  التحقق من أن الصورة أفقية/عمودية
-  وإظهار رسالة للمستخدم.
-*/
-
-function imageOrientationMessage(
-    image
-){
-
-    const w =
-        image.naturalWidth ||
-        image.width;
-
-    const h =
-        image.naturalHeight ||
-        image.height;
-
-
-    if(
-        w>h
-    ){
-
-        return "أفقي";
-
-    }
-
-
-    return "عمودي";
-
-}
-
-
-/*
-  تنظيف نتائج قديمة عند بدء تحليل جديد.
-*/
-
-function clearCurrentResult(){
+function showResult(data){
 
     const result =
-        document.getElementById(
-            "result"
-        );
+        document.getElementById("result");
 
 
-    result.innerHTML = "";
-
-    result.style.display =
-        "none";
-
-}
+    result.className =
+        "result " + data.type;
 
 
-/* =========================================================
-   منع الصور الكبيرة جدًا من التسبب في مشاكل
-========================================================= */
-
-window.addEventListener(
-    "error",
-    function(event){
-
-        console.error(
-            "Application error:",
-            event.error ||
-            event.message
-        );
-
-    }
-);
+    let icon = "ℹ️";
 
 
-/* =========================================================
-   تحسين تجربة زر الرجوع في الهاتف
-========================================================= */
-
-window.addEventListener(
-    "pageshow",
-    function(){
-
-        displayHistory();
-
-    }
-);
-
-</script>
-
-/* =========================================
-   عرض النتيجة
-========================================= */
-
-function displayResult(data){
-
-    const box =
-        document.getElementById(
-            "result"
-        );
-
-
-    box.className =
-        "result result-" +
-        data.type;
-
-
-    let icon = "🟡";
-
-
-    if(data.type === "positive"){
-
+    if(data.type==="positive"){
         icon = "🔴";
-
     }
-    else if(data.type === "negative"){
 
+    if(data.type==="negative"){
         icon = "🟢";
-
     }
-    else if(data.type === "invalid"){
 
+    if(data.type==="invalid"){
         icon = "🟠";
+    }
 
+    if(data.type==="unclear"){
+        icon = "🟡";
     }
 
 
-    let confidenceHTML = "";
-
-
-    if(
-        typeof data.confidence ===
-        "number"
-    ){
-
-        const confidence =
-            Math.max(
-                0,
-                Math.min(
-                    100,
-                    data.confidence
-                )
-            );
-
-
-        confidenceHTML = `
-
-            <div class="confidence">
-
-                <b>
-                    درجة وضوح التحليل:
-                    ${confidence}%
-                </b>
-
-                <div
-                    class="confidence-bar">
-
-                    <div
-                        class="confidence-fill"
-                        style="width:${confidence}%">
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
-
-
-    let linesHTML = "";
-
-
-    if(data.lines){
-
-        linesHTML = `
-
-            <div class="lines-preview">
-
-                <div class="line-row">
-
-                    <span>
-                        <span class="
-                            line-indicator
-                            ${
-                                data.lines.C
-                                ?
-                                "detected"
-                                :
-                                "not-detected"
-                            }
-                        "></span>
-
-                        خط التحكم C
-
-                    </span>
-
-                    <b>
-                        ${
-                            data.lines.C
-                            ?
-                            "مكتشف"
-                            :
-                            "غير مكتشف"
-                        }
-                    </b>
-
-                </div>
-
-
-                <div class="line-row">
-
-                    <span>
-
-                        <span class="
-                            line-indicator
-                            ${
-                                data.lines.T
-                                ?
-                                "detected"
-                                :
-                                "not-detected"
-                            }
-                        "></span>
-
-                        خط الاختبار T
-
-                    </span>
-
-                    <b>
-
-                        ${
-                            data.lines.T
-                            ?
-                            "مكتشف"
-                            :
-                            "غير مكتشف"
-                        }
-
-                    </b>
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
-
-
-    box.innerHTML = `
+    result.innerHTML = `
 
         <h2>
-
-            ${icon}
-
-            ${data.title}
-
+            ${icon} ${data.title}
         </h2>
 
-
         <p>
-
             ${data.message}
-
         </p>
 
+        <hr>
 
-        ${confidenceHTML}
+        <p class="small">
 
-        ${linesHTML}
+        ⚠️ هذه النتيجة تحليل للصورة وليست
+        تشخيصًا طبيًا.
 
-
-        <div class="warning">
-
-            ⚠️ هذه النتيجة مساعدة لقراءة الصورة
-            وليست تشخيصًا طبيًا.
-
-        </div>
+        </p>
 
     `;
 
 
-    box.style.display =
-        "block";
+    result.style.display = "block";
 
 
-    saveHistory(data);
-
-
-    setTimeout(
-        function(){
-
-            box.scrollIntoView({
-
-                behavior:"smooth",
-
-                block:"center"
-
-            });
-
-        },
-        100
+    saveHistory(
+        data.title,
+        data.type
     );
 
 }
 
 
-/* =========================================
-   حفظ السجل
-========================================= */
+/*
+=================================================
+حفظ النتيجة
+=================================================
+*/
 
-function saveHistory(data){
+function saveHistory(title,type){
 
     let history =
         JSON.parse(
             localStorage.getItem(
-                "pregnancy_history_v2"
+                "pregnancy_history"
             ) || "[]"
         );
 
 
-    const record = {
+    const item = {
 
-        title:
-        data.title || "",
+        title:title,
 
-        type:
-        data.type || "unclear",
+        type:type,
 
-        confidence:
-        data.confidence || 0,
-
-        date:
-        new Date().toLocaleString(
+        date:new Date().toLocaleString(
             "ar"
         )
 
     };
 
 
-    history.unshift(record);
+    history.unshift(item);
 
+
+    /*
+    الاحتفاظ بآخر 20 نتيجة
+    */
 
     history =
-        history.slice(0,30);
+        history.slice(0,20);
 
 
     localStorage.setItem(
-
-        "pregnancy_history_v2",
-
+        "pregnancy_history",
         JSON.stringify(history)
-
     );
 
 
@@ -3096,40 +795,32 @@ function saveHistory(data){
 }
 
 
-/* =========================================
-   عرض السجل
-========================================= */
+/*
+=================================================
+عرض السجل
+=================================================
+*/
 
 function displayHistory(){
 
     const container =
-        document.getElementById(
-            "history"
-        );
+        document.getElementById("history");
 
 
     let history =
         JSON.parse(
             localStorage.getItem(
-                "pregnancy_history_v2"
+                "pregnancy_history"
             ) || "[]"
         );
 
 
-    if(
-        !history ||
-        history.length === 0
-    ){
+    if(history.length===0){
 
-        container.innerHTML = `
-
-            <div class="empty">
-
-                لا توجد فحوصات محفوظة.
-
-            </div>
-
-        `;
+        container.innerHTML =
+        `<p class="small">
+        لا توجد نتائج محفوظة.
+        </p>`;
 
         return;
 
@@ -3139,157 +830,109 @@ function displayHistory(){
     container.innerHTML = "";
 
 
-    history.forEach(
-        function(item){
+    history.forEach(function(item){
 
-            let icon = "🟡";
+        let icon="ℹ️";
 
-
-            if(
-                item.type ===
-                "positive"
-            ){
-
-                icon = "🔴";
-
-            }
-            else if(
-                item.type ===
-                "negative"
-            ){
-
-                icon = "🟢";
-
-            }
-            else if(
-                item.type ===
-                "invalid"
-            ){
-
-                icon = "🟠";
-
-            }
-
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "history-item";
-
-
-            div.innerHTML = `
-
-                <div>
-
-                    ${icon}
-
-                    <b>
-                        ${item.title}
-                    </b>
-
-                </div>
-
-
-                <div
-                    class="history-status">
-
-                    درجة الوضوح:
-                    ${item.confidence || 0}%
-
-                </div>
-
-
-                <div
-                    class="history-date">
-
-                    ${item.date}
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                div
-            );
-
+        if(item.type==="positive"){
+            icon="🔴";
         }
-    );
+
+        if(item.type==="negative"){
+            icon="🟢";
+        }
+
+        if(item.type==="invalid"){
+            icon="🟠";
+        }
+
+        if(item.type==="unclear"){
+            icon="🟡";
+        }
+
+
+        const div =
+            document.createElement("div");
+
+        div.className =
+            "history-item";
+
+
+        div.innerHTML = `
+
+            <div>
+                ${icon}
+                <b>${item.title}</b>
+            </div>
+
+            <div class="date">
+                ${item.date}
+            </div>
+
+        `;
+
+
+        container.appendChild(div);
+
+    });
 
 }
 
 
-/* =========================================
-   حذف السجل
-========================================= */
+/*
+=================================================
+حذف السجل
+=================================================
+*/
 
 function clearHistory(){
 
-    const ok =
+    if(
         confirm(
             "هل تريد حذف جميع نتائج الفحوصات؟"
+        )
+    ){
+
+        localStorage.removeItem(
+            "pregnancy_history"
         );
 
-
-    if(!ok){
-
-        return;
+        displayHistory();
 
     }
-
-
-    localStorage.removeItem(
-        "pregnancy_history_v2"
-    );
-
-
-    displayHistory();
 
 }
 
 
-/* =========================================
-   إعادة الاختبار
-========================================= */
+/*
+=================================================
+إعادة الاختبار
+=================================================
+*/
 
 function resetTest(){
 
     selectedImage = null;
 
-    originalImageData = null;
 
-    currentAnalysis = null;
-
-
-    const preview =
-        document.getElementById(
-            "preview"
-        );
-
-
-    preview.src = "";
+    document.getElementById(
+        "preview"
+    ).style.display = "none";
 
 
     document.getElementById(
-        "previewBox"
-    ).style.display =
-        "none";
+        "preview"
+    ).src = "";
 
 
     document.getElementById(
         "analyzeButton"
-    ).disabled =
-        true;
+    ).disabled = true;
 
 
     document.getElementById(
         "result"
-    ).style.display =
-        "none";
+    ).style.display = "none";
 
 
     document.getElementById(
@@ -3304,14 +947,15 @@ function resetTest(){
 }
 
 
-/* =========================================
-   تشغيل السجل
-========================================= */
+/*
+=================================================
+تشغيل السجل عند فتح التطبيق
+=================================================
+*/
 
 displayHistory();
 
 </script>
 
 </body>
-
 </html>
