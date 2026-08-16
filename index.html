@@ -1094,27 +1094,1733 @@ function startAnalysis(){
    سيتم استبدال هذه الدالة في الجزء الثاني
 ========================================= */
 
+<script>
+
+/* =========================================================
+   محرك تحليل اختبار الحمل
+   الإصدار المتقدم
+========================================================= */
+
 function advancedImageAnalysis(image){
 
+    const canvas =
+        document.getElementById("canvas");
+
+    const ctx =
+        canvas.getContext("2d", {
+            willReadFrequently:true
+        });
+
+
+    /* -----------------------------------------
+       1. تجهيز الصورة
+    ----------------------------------------- */
+
+    let originalWidth =
+        image.naturalWidth ||
+        image.width;
+
+    let originalHeight =
+        image.naturalHeight ||
+        image.height;
+
+
+    if(
+        !originalWidth ||
+        !originalHeight
+    ){
+
+        throw new Error(
+            "Invalid image dimensions"
+        );
+
+    }
+
+
     /*
-      محرك التحليل المتقدم
-      سيضاف في الجزء الثاني.
+      تصغير الصور الكبيرة
+      حتى يعمل التطبيق بشكل جيد على الهاتف.
     */
+
+    const MAX_SIZE = 1200;
+
+    let scale = 1;
+
+
+    if(
+        originalWidth > MAX_SIZE ||
+        originalHeight > MAX_SIZE
+    ){
+
+        scale =
+            Math.min(
+                MAX_SIZE / originalWidth,
+                MAX_SIZE / originalHeight
+            );
+
+    }
+
+
+    const width =
+        Math.max(
+            300,
+            Math.round(
+                originalWidth * scale
+            )
+        );
+
+
+    const height =
+        Math.max(
+            200,
+            Math.round(
+                originalHeight * scale
+            )
+        );
+
+
+    canvas.width = width;
+    canvas.height = height;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    ctx.drawImage(
+        image,
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    const imageData =
+        ctx.getImageData(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+    const pixels =
+        imageData.data;
+
+
+    /* -----------------------------------------
+       2. تحليل جودة الصورة
+    ----------------------------------------- */
+
+    const quality =
+        calculateImageQuality(
+            pixels,
+            width,
+            height
+        );
+
+
+    /*
+      إذا كانت الصورة مظلمة جدًا أو مضيئة جدًا
+      نرفضها قبل التحليل.
+    */
+
+    if(
+        quality.averageBrightness < 25 ||
+        quality.averageBrightness > 245
+    ){
+
+        return {
+
+            type:"unclear",
+
+            title:
+            "الصورة غير مناسبة",
+
+            message:
+            "الإضاءة غير مناسبة للتحليل. التقط صورة جديدة في إضاءة متوسطة وواضحة.",
+
+            confidence:20,
+
+            lines:{
+                C:false,
+                T:false
+            }
+
+        };
+
+    }
+
+
+    /* -----------------------------------------
+       3. إنشاء صورة رمادية
+    ----------------------------------------- */
+
+    const gray =
+        createGrayImage(
+            pixels,
+            width,
+            height
+        );
+
+
+    /* -----------------------------------------
+       4. إزالة بعض الضوضاء
+    ----------------------------------------- */
+
+    const smooth =
+        blurGrayImage(
+            gray,
+            width,
+            height
+        );
+
+
+    /* -----------------------------------------
+       5. البحث عن منطقة اختبار محتملة
+    ----------------------------------------- */
+
+    const region =
+        findTestRegion(
+            smooth,
+            width,
+            height
+        );
+
+
+    if(!region){
+
+        return {
+
+            type:"unclear",
+
+            title:
+            "لم يتم العثور على شريط الاختبار",
+
+            message:
+            "ضع شريط اختبار الحمل بالكامل داخل الصورة، وحاول التصوير من الأعلى وفي إضاءة جيدة.",
+
+            confidence:15,
+
+            lines:{
+                C:false,
+                T:false
+            }
+
+        };
+
+    }
+
+
+    /* -----------------------------------------
+       6. تحليل خطوط المنطقة
+    ----------------------------------------- */
+
+    const lines =
+        analyzeTestRegion(
+            smooth,
+            width,
+            height,
+            region
+        );
+
+
+    /* -----------------------------------------
+       7. اتخاذ القرار
+    ----------------------------------------- */
+
+    return interpretLines(
+        lines,
+        quality
+    );
+
+}
+
+
+/* =========================================================
+   جودة الصورة
+========================================================= */
+
+function calculateImageQuality(
+    pixels,
+    width,
+    height
+){
+
+    let sum = 0;
+
+    let sumSq = 0;
+
+    let count = 0;
+
+
+    /*
+      نأخذ عينات بدل تحليل كل بكسل.
+    */
+
+    const step =
+        Math.max(
+            1,
+            Math.floor(
+                Math.sqrt(
+                    (width * height) /
+                    50000
+                )
+            )
+        );
+
+
+    for(
+        let y=0;
+        y<height;
+        y+=step
+    ){
+
+        for(
+            let x=0;
+            x<width;
+            x+=step
+        ){
+
+            const i =
+                (y * width + x) * 4;
+
+
+            const r =
+                pixels[i];
+
+            const g =
+                pixels[i+1];
+
+            const b =
+                pixels[i+2];
+
+
+            const value =
+                (
+                    0.299*r +
+                    0.587*g +
+                    0.114*b
+                );
+
+
+            sum += value;
+
+            sumSq +=
+                value * value;
+
+            count++;
+
+        }
+
+    }
+
+
+    const mean =
+        sum / Math.max(1,count);
+
+
+    const variance =
+        Math.max(
+            0,
+            (sumSq / Math.max(1,count))
+            -
+            (mean * mean)
+        );
+
+
+    const contrast =
+        Math.sqrt(
+            variance
+        );
+
 
     return {
 
-        type:"unclear",
+        averageBrightness:
+        mean,
 
-        title:
-        "النتيجة غير واضحة",
-
-        message:
-        "يرجى استخدام صورة واضحة لشريط الاختبار."
+        contrast:
+        contrast
 
     };
 
 }
 
+
+/* =========================================================
+   تحويل إلى رمادي
+========================================================= */
+
+function createGrayImage(
+    pixels,
+    width,
+    height
+){
+
+    const gray =
+        new Float32Array(
+            width * height
+        );
+
+
+    for(
+        let y=0;
+        y<height;
+        y++
+    ){
+
+        for(
+            let x=0;
+            x<width;
+            x++
+        ){
+
+            const i =
+                (y * width + x) * 4;
+
+
+            const r =
+                pixels[i];
+
+            const g =
+                pixels[i+1];
+
+            const b =
+                pixels[i+2];
+
+
+            gray[
+                y * width + x
+            ] =
+                0.299*r +
+                0.587*g +
+                0.114*b;
+
+        }
+
+    }
+
+
+    return gray;
+
+}
+
+
+/* =========================================================
+   تنعيم الصورة
+========================================================= */
+
+function blurGrayImage(
+    gray,
+    width,
+    height
+){
+
+    const result =
+        new Float32Array(
+            width * height
+        );
+
+
+    /*
+      متوسط بسيط 3x3
+    */
+
+    for(
+        let y=1;
+        y<height-1;
+        y++
+    ){
+
+        for(
+            let x=1;
+            x<width-1;
+            x++
+        ){
+
+            let sum = 0;
+
+
+            sum +=
+                gray[
+                    (y-1)*width +
+                    (x-1)
+                ];
+
+            sum +=
+                gray[
+                    (y-1)*width +
+                    x
+                ];
+
+            sum +=
+                gray[
+                    (y-1)*width +
+                    (x+1)
+                ];
+
+
+            sum +=
+                gray[
+                    y*width +
+                    (x-1)
+                ];
+
+            sum +=
+                gray[
+                    y*width +
+                    x
+                ];
+
+            sum +=
+                gray[
+                    y*width +
+                    (x+1)
+                ];
+
+
+            sum +=
+                gray[
+                    (y+1)*width +
+                    (x-1)
+                ];
+
+            sum +=
+                gray[
+                    (y+1)*width +
+                    x
+                ];
+
+            sum +=
+                gray[
+                    (y+1)*width +
+                    (x+1)
+                ];
+
+
+            result[
+                y*width+x
+            ] =
+                sum / 9;
+
+        }
+
+    }
+
+
+    /*
+      حدود الصورة
+    */
+
+    for(
+        let x=0;
+        x<width;
+        x++
+    ){
+
+        result[x] =
+            gray[x];
+
+        result[
+            (height-1)*width+x
+        ] =
+            gray[
+                (height-1)*width+x
+            ];
+
+    }
+
+
+    for(
+        let y=0;
+        y<height;
+        y++
+    ){
+
+        result[
+            y*width
+        ] =
+            gray[
+                y*width
+            ];
+
+        result[
+            y*width+
+            width-1
+        ] =
+            gray[
+                y*width+
+                width-1
+            ];
+
+    }
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   البحث عن منطقة الاختبار
+========================================================= */
+
+function findTestRegion(
+    gray,
+    width,
+    height
+){
+
+    /*
+      نحاول أولًا العثور على منطقة أفقية
+      تحتوي على تغيرات واضحة.
+
+      الاختبار قد يكون في أي جزء من الصورة،
+      لذلك نقسم الصورة إلى شرائح.
+    */
+
+
+    const candidates = [];
+
+
+    const minY =
+        Math.floor(
+            height * 0.10
+        );
+
+
+    const maxY =
+        Math.floor(
+            height * 0.90
+        );
+
+
+    const bandHeight =
+        Math.max(
+            20,
+            Math.floor(
+                height * 0.08
+            )
+        );
+
+
+    for(
+        let y=minY;
+        y<maxY-bandHeight;
+        y+=5
+    ){
+
+        let darkness = 0;
+
+        let variation = 0;
+
+        let count = 0;
+
+
+        for(
+            let yy=y;
+            yy<y+bandHeight;
+            yy+=2
+        ){
+
+            for(
+                let x=
+                    Math.floor(
+                        width*0.10
+                    );
+
+                x<
+                    Math.floor(
+                        width*0.90
+                    );
+
+                x+=4
+            ){
+
+                const value =
+                    gray[
+                        yy*width+x
+                    ];
+
+
+                darkness +=
+                    255-value;
+
+
+                /*
+                  قياس التغير المحلي
+                */
+
+                if(x>2){
+
+                    variation +=
+                        Math.abs(
+                            value -
+                            gray[
+                                yy*width+x-2
+                            ]
+                        );
+
+                }
+
+
+                count++;
+
+            }
+
+        }
+
+
+        const d =
+            darkness /
+            Math.max(1,count);
+
+
+        const v =
+            variation /
+            Math.max(1,count);
+
+
+        /*
+          نبحث عن منطقة ليست سوداء بالكامل
+          وليست بيضاء بالكامل، وفيها تغيرات.
+        */
+
+        if(
+            d > 5 &&
+            d < 180
+        ){
+
+            candidates.push({
+
+                y:y,
+
+                score:
+                    v +
+                    d*0.15
+
+            });
+
+        }
+
+    }
+
+
+    if(
+        candidates.length===0
+    ){
+
+        return null;
+
+    }
+
+
+    candidates.sort(
+        (a,b)=>
+            b.score-a.score
+    );
+
+
+    const best =
+        candidates[0];
+
+
+    /*
+      نأخذ منطقة واسعة نسبيًا
+      حول المرشح.
+    */
+
+    const regionHeight =
+        Math.floor(
+            height * 0.30
+        );
+
+
+    let top =
+        best.y -
+        Math.floor(
+            regionHeight/3
+        );
+
+
+    if(top<0){
+        top=0;
+    }
+
+
+    if(
+        top+regionHeight >
+        height
+    ){
+
+        top =
+            height-regionHeight;
+
+    }
+
+
+    return {
+
+        x:
+        Math.floor(
+            width*0.08
+        ),
+
+        y:top,
+
+        width:
+        Math.floor(
+            width*0.84
+        ),
+
+        height:
+        regionHeight
+
+    };
+
+}
+
+
+/* =========================================================
+   تحليل منطقة الاختبار
+========================================================= */
+
+function analyzeTestRegion(
+    gray,
+    width,
+    height,
+    region
+){
+
+    /*
+      نحسب متوسط شدة كل صف.
+
+      خطوط C و T غالبًا تكون خطوطًا
+      أفقية في شريط الاختبار.
+    */
+
+
+    const profiles = [];
+
+
+    const xStart =
+        region.x;
+
+
+    const xEnd =
+        Math.min(
+            width,
+            region.x +
+            region.width
+        );
+
+
+    const yStart =
+        region.y;
+
+
+    const yEnd =
+        Math.min(
+            height,
+            region.y +
+            region.height
+        );
+
+
+    for(
+        let y=yStart;
+        y<yEnd;
+        y++
+    ){
+
+        let sum=0;
+
+        let count=0;
+
+
+        for(
+            let x=xStart;
+            x<xEnd;
+            x+=2
+        ){
+
+            sum +=
+                gray[
+                    y*width+x
+                ];
+
+            count++;
+
+        }
+
+
+        const mean =
+            sum /
+            Math.max(
+                1,
+                count
+            );
+
+
+        profiles.push({
+
+            y:y,
+
+            value:mean
+
+        });
+
+    }
+
+
+    /*
+      إزالة الميل العام للإضاءة
+    */
+
+    const normalized =
+        normalizeProfile(
+            profiles
+        );
+
+
+    /*
+      العثور على القمم الداكنة
+    */
+
+    const peaks =
+        findDarkPeaks(
+            normalized
+        );
+
+
+    /*
+      ترتيب الخطوط حسب الموقع.
+    */
+
+    peaks.sort(
+        (a,b)=>
+            a.y-b.y
+    );
+
+
+    /*
+      نبحث عن أفضل خطين.
+    */
+
+    let selected = [];
+
+
+    for(
+        let i=0;
+        i<peaks.length;
+        i++
+    ){
+
+        let p =
+            peaks[i];
+
+
+        let near =
+            selected.some(
+                q =>
+                Math.abs(
+                    q.y-p.y
+                ) < 12
+            );
+
+
+        if(!near){
+
+            selected.push(p);
+
+        }
+
+
+        if(
+            selected.length>=4
+        ){
+
+            break;
+
+        }
+
+    }
+
+
+    /*
+      إذا وجدنا أكثر من خطين،
+      نختار الأقوى.
+    */
+
+    selected.sort(
+        (a,b)=>
+            b.strength-a.strength
+    );
+
+
+    const strongest =
+        selected[0] || null;
+
+
+    const second =
+        selected[1] || null;
+
+
+    /*
+      ترتيب مكاني.
+    */
+
+    let line1 = null;
+
+    let line2 = null;
+
+
+    if(strongest){
+
+        if(
+            second &&
+            second.strength >
+            strongest.strength*0.20
+        ){
+
+            if(
+                strongest.y <
+                second.y
+            ){
+
+                line1 =
+                    strongest;
+
+                line2 =
+                    second;
+
+            }else{
+
+                line1 =
+                    second;
+
+                line2 =
+                    strongest;
+
+            }
+
+        }else{
+
+            line1 =
+                strongest;
+
+        }
+
+    }
+
+
+    /*
+      تحويل قوة الخط إلى درجة تقريبية.
+    */
+
+    const cStrength =
+        line1
+        ?
+        line1.strength
+        :
+        0;
+
+
+    const tStrength =
+        line2
+        ?
+        line2.strength
+        :
+        0;
+
+
+    return {
+
+        line1:line1,
+
+        line2:line2,
+
+        cStrength:cStrength,
+
+        tStrength:tStrength,
+
+        profile:normalized,
+
+        region:region
+
+    };
+
+}
+
+
+/* =========================================================
+   تطبيع البروفايل
+========================================================= */
+
+function normalizeProfile(
+    profiles
+){
+
+    const result = [];
+
+
+    /*
+      نحسب متوسط عام.
+    */
+
+    let average=0;
+
+
+    profiles.forEach(
+        p=>{
+            average += p.value;
+        }
+    );
+
+
+    average /=
+        Math.max(
+            1,
+            profiles.length
+        );
+
+
+    /*
+      نعطي كل نقطة مقدار اختلافها
+      عن المتوسط.
+
+      الرقم الأقل = أغمق.
+    */
+
+    profiles.forEach(
+        p=>{
+
+            result.push({
+
+                y:p.y,
+
+                value:p.value,
+
+                darkness:
+                    average-p.value
+
+            });
+
+        }
+    );
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   العثور على الخطوط
+========================================================= */
+
+function findDarkPeaks(
+    profile
+){
+
+    if(
+        !profile ||
+        profile.length<5
+    ){
+
+        return [];
+
+    }
+
+
+    const peaks=[];
+
+
+    /*
+      نبحث عن نقاط أغمق من الجوار.
+    */
+
+    for(
+        let i=2;
+        i<profile.length-2;
+        i++
+    ){
+
+        const p =
+            profile[i];
+
+
+        const left1 =
+            profile[i-1].darkness;
+
+        const left2 =
+            profile[i-2].darkness;
+
+        const right1 =
+            profile[i+1].darkness;
+
+        const right2 =
+            profile[i+2].darkness;
+
+
+        const localMaximum =
+            p.darkness >
+            left1 &&
+            p.darkness >=
+            right1 &&
+            p.darkness >
+            left2*.65 &&
+            p.darkness >
+            right2*.65;
+
+
+        if(
+            localMaximum &&
+            p.darkness > 3
+        ){
+
+            /*
+              تجميع عدة صفوف حول الخط.
+            */
+
+            let strength =
+                p.darkness;
+
+
+            let total =
+                p.darkness;
+
+
+            let count=1;
+
+
+            for(
+                let k=1;
+                k<=3;
+                k++
+            ){
+
+                if(
+                    profile[i-k]
+                ){
+
+                    total +=
+                        Math.max(
+                            0,
+                            profile[i-k]
+                                .darkness
+                        );
+
+                    count++;
+
+                }
+
+
+                if(
+                    profile[i+k]
+                ){
+
+                    total +=
+                        Math.max(
+                            0,
+                            profile[i+k]
+                                .darkness
+                        );
+
+                    count++;
+
+                }
+
+            }
+
+
+            strength =
+                total/count;
+
+
+            peaks.push({
+
+                y:p.y,
+
+                strength:
+                    strength
+
+            });
+
+        }
+
+    }
+
+
+    return peaks;
+
+}
+
+
+/* =========================================================
+   تفسير الخطوط
+========================================================= */
+
+function interpretLines(
+    lines,
+    quality
+){
+
+    /*
+      هذه القيم ليست قيمًا طبية.
+      هي فقط لتقييم جودة الصورة
+      وقوة الخط المكتشف.
+    */
+
+
+    const c =
+        lines.cStrength || 0;
+
+
+    const t =
+        lines.tStrength || 0;
+
+
+    /*
+      نحدد حدًا أدنى تقريبيًا.
+    */
+
+    const MIN_LINE =
+        5;
+
+
+    const hasC =
+        c >= MIN_LINE;
+
+
+    const hasT =
+        t >= MIN_LINE;
+
+
+    /*
+      إذا لم نجد C
+      فالاختبار غير صالح/غير واضح.
+    */
+
+    if(!hasC){
+
+        return {
+
+            type:
+            "invalid",
+
+            title:
+            "الاختبار غير صالح أو غير واضح",
+
+            message:
+            "لم يتمكن التحليل من تحديد خط التحكم C بوضوح. أعد تصوير الاختبار أو استخدم اختبارًا جديدًا.",
+
+            confidence:
+            calculateConfidence(
+                c,
+                t,
+                quality
+            ),
+
+            lines:{
+                C:false,
+                T:hasT
+            }
+
+        };
+
+    }
+
+
+    /*
+      وجود خط C وعدم وجود T.
+    */
+
+    if(
+        hasC &&
+        !hasT
+    ){
+
+        return {
+
+            type:
+            "negative",
+
+            title:
+            "سلبي محتمل",
+
+            message:
+            "تم اكتشاف خط تحكم C ولم يتم اكتشاف خط T بوضوح. وفقًا لطريقة قراءة الاختبار، قد تكون النتيجة سلبية.",
+
+            confidence:
+            calculateConfidence(
+                c,
+                t,
+                quality
+            ),
+
+            lines:{
+                C:true,
+                T:false
+            }
+
+        };
+
+    }
+
+
+    /*
+      وجود C و T.
+    */
+
+    if(
+        hasC &&
+        hasT
+    ){
+
+        /*
+          إذا كان T ضعيفًا جدًا،
+          نعرض أنها نتيجة إيجابية محتملة
+          مع ثقة أقل.
+        */
+
+        let message =
+            "تم اكتشاف خطي C و T محتملين. إذا كان الخطان ظاهرين ضمن الوقت المحدد في تعليمات الاختبار، فقد تكون النتيجة إيجابية.";
+
+
+        if(
+            t < c*0.30
+        ){
+
+            message =
+            "تم اكتشاف خط C وخط T خفيف محتمل. قد يشير الخط الخفيف إلى نتيجة إيجابية، لكن يجب تأكيدها باختبار آخر أو تحليل طبي.";
+
+        }
+
+
+        return {
+
+            type:
+            "positive",
+
+            title:
+            "إيجابي محتمل",
+
+            message:
+            message,
+
+            confidence:
+            calculateConfidence(
+                c,
+                t,
+                quality
+            ),
+
+            lines:{
+                C:true,
+                T:true
+            }
+
+        };
+
+    }
+
+
+    /*
+      حالة احتياطية.
+    */
+
+    return {
+
+        type:
+        "unclear",
+
+        title:
+        "النتيجة غير واضحة",
+
+        message:
+        "لم يتمكن التطبيق من تحليل الخطوط بدرجة كافية. حاول التقاط صورة أوضح.",
+
+        confidence:25,
+
+        lines:{
+            C:false,
+            T:false
+        }
+
+    };
+
+}
+
+
+/* =========================================================
+   حساب درجة الثقة البصرية
+========================================================= */
+
+function calculateConfidence(
+    c,
+    t,
+    quality
+){
+
+    /*
+      قوة خط C مهمة جدًا
+      لأن الاختبار يحتاج خط التحكم.
+    */
+
+    let score = 0;
+
+
+    /*
+      قوة C
+    */
+
+    score +=
+        Math.min(
+            45,
+            c*3
+        );
+
+
+    /*
+      قوة T
+    */
+
+    score +=
+        Math.min(
+            25,
+            t*2
+        );
+
+
+    /*
+      التباين
+    */
+
+    score +=
+        Math.min(
+            20,
+            quality.contrast
+        );
+
+
+    /*
+      الإضاءة المناسبة
+    */
+
+    const brightness =
+        quality.averageBrightness;
+
+
+    if(
+        brightness >=70 &&
+        brightness <=220
+    ){
+
+        score += 10;
+
+    }
+
+
+    score =
+        Math.round(
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    score
+                )
+            )
+        );
+
+
+    return score;
+
+}
+
+
+/* =========================================================
+   أدوات إضافية للتطبيق
+========================================================= */
+
+
+/*
+  تحويل صورة Canvas إلى صورة
+  عند الحاجة للمعاينة.
+*/
+
+function canvasToDataURL(){
+
+    const canvas =
+        document.getElementById(
+            "canvas"
+        );
+
+
+    return canvas.toDataURL(
+        "image/jpeg",
+        .90
+    );
+
+}
+
+
+/*
+  حساب شدة خط معين
+*/
+
+function measureLine(
+    gray,
+    width,
+    x1,
+    x2,
+    y
+){
+
+    if(
+        y<0 ||
+        y>=gray.length/width
+    ){
+
+        return 0;
+
+    }
+
+
+    let sum=0;
+
+    let count=0;
+
+
+    for(
+        let x=x1;
+        x<x2;
+        x++
+    ){
+
+        if(
+            x<0 ||
+            x>=width
+        ){
+
+            continue;
+
+        }
+
+
+        sum +=
+            gray[
+                y*width+x
+            ];
+
+        count++;
+
+    }
+
+
+    if(count===0){
+
+        return 0;
+
+    }
+
+
+    return 255 -
+        (sum/count);
+
+}
+
+
+/*
+  التحقق من أن الصورة أفقية/عمودية
+  وإظهار رسالة للمستخدم.
+*/
+
+function imageOrientationMessage(
+    image
+){
+
+    const w =
+        image.naturalWidth ||
+        image.width;
+
+    const h =
+        image.naturalHeight ||
+        image.height;
+
+
+    if(
+        w>h
+    ){
+
+        return "أفقي";
+
+    }
+
+
+    return "عمودي";
+
+}
+
+
+/*
+  تنظيف نتائج قديمة عند بدء تحليل جديد.
+*/
+
+function clearCurrentResult(){
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    result.innerHTML = "";
+
+    result.style.display =
+        "none";
+
+}
+
+
+/* =========================================================
+   منع الصور الكبيرة جدًا من التسبب في مشاكل
+========================================================= */
+
+window.addEventListener(
+    "error",
+    function(event){
+
+        console.error(
+            "Application error:",
+            event.error ||
+            event.message
+        );
+
+    }
+);
+
+
+/* =========================================================
+   تحسين تجربة زر الرجوع في الهاتف
+========================================================= */
+
+window.addEventListener(
+    "pageshow",
+    function(){
+
+        displayHistory();
+
+    }
+);
+
+</script>
 
 /* =========================================
    عرض النتيجة
