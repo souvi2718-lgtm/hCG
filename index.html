@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=5.0,
+      user-scalable=yes">
+
+<meta name="theme-color"
+      content="#1976d2">
+
+<title>فحص الحمل الذكي</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+    margin:0;
+    padding:0;
+    width:100%;
+    min-height:100%;
+}
+
+body{
+
+    font-family:
+    Tahoma,
+    Arial,
+    sans-serif;
+
+    background:#f3f6fa;
+
+    color:#222;
+
+}
+
+header{
+
+    background:
+    linear-gradient(
+        135deg,
+        #1976d2,
+        #0d47a1
+    );
+
+    color:white;
+
+    text-align:center;
+
+    padding:22px 15px;
+
+    box-shadow:
+    0 3px 10px
+    rgba(0,0,0,.20);
+
+}
+
+header h1{
+
+    margin:0;
+
+    font-size:25px;
+
+}
+
+header p{
+
+    margin:8px 0 0;
+
+    font-size:14px;
+
+    opacity:.95;
+
+}
+
+.container{
+
+    width:100%;
+
+    max-width:700px;
+
+    margin:auto;
+
+    padding:15px;
+
+}
+
+.card{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:18px;
+
+    margin-bottom:16px;
+
+    box-shadow:
+    0 3px 15px
+    rgba(0,0,0,.08);
+
+}
+
+.card h2{
+
+    margin-top:0;
+
+    font-size:20px;
+
+}
+
+.info{
+
+    background:#e3f2fd;
+
+    border-right:
+    5px solid #1976d2;
+
+    border-radius:10px;
+
+    padding:13px;
+
+    line-height:1.8;
+
+    font-size:14px;
+
+    margin-bottom:15px;
+
+}
+
+.warning{
+
+    background:#fff3cd;
+
+    border-right:
+    5px solid #ff9800;
+
+    border-radius:10px;
+
+    padding:13px;
+
+    line-height:1.8;
+
+    font-size:13px;
+
+    margin-top:15px;
+
+}
+
+button{
+
+    width:100%;
+
+    border:none;
+
+    border-radius:13px;
+
+    padding:15px;
+
+    margin-top:10px;
+
+    font-family:inherit;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:
+    transform .1s,
+    opacity .2s;
+
+}
+
+button:active{
+
+    transform:scale(.98);
+
+}
+
+button:disabled{
+
+    opacity:.45;
+
+    cursor:not-allowed;
+
+}
+
+.btn-camera{
+
+    background:#1976d2;
+
+    color:white;
+
+}
+
+.btn-gallery{
+
+    background:#455a64;
+
+    color:white;
+
+}
+
+.btn-analyze{
+
+    background:#00897b;
+
+    color:white;
+
+}
+
+.btn-reset{
+
+    background:#e53935;
+
+    color:white;
+
+}
+
+.btn-secondary{
+
+    background:#eeeeee;
+
+    color:#333;
+
+}
+
+input[type=file]{
+
+    display:none;
+
+}
+
+.preview-box{
+
+    position:relative;
+
+    width:100%;
+
+    min-height:180px;
+
+    margin-top:15px;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    background:#eceff1;
+
+    display:none;
+
+}
+
+#preview{
+
+    display:block;
+
+    width:100%;
+
+    max-height:500px;
+
+    object-fit:contain;
+
+}
+
+.preview-label{
+
+    position:absolute;
+
+    top:10px;
+
+    right:10px;
+
+    background:
+    rgba(0,0,0,.65);
+
+    color:white;
+
+    padding:6px 10px;
+
+    border-radius:8px;
+
+    font-size:12px;
+
+}
+
+#canvas{
+
+    display:none;
+
+}
+
+.loading{
+
+    display:none;
+
+    text-align:center;
+
+    padding:20px 10px;
+
+}
+
+.spinner{
+
+    width:42px;
+
+    height:42px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    border:
+    4px solid #ddd;
+
+    border-top-color:
+    #1976d2;
+
+    animation:
+    spin .8s linear infinite;
+
+}
+
+@keyframes spin{
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
+.result{
+
+    display:none;
+
+    margin-top:18px;
+
+    border-radius:16px;
+
+    padding:20px;
+
+    text-align:center;
+
+}
+
+.result h2{
+
+    margin-top:0;
+
+    font-size:23px;
+
+}
+
+.result-positive{
+
+    background:#ffebee;
+
+    border:
+    2px solid #e53935;
+
+    color:#b71c1c;
+
+}
+
+.result-negative{
+
+    background:#e8f5e9;
+
+    border:
+    2px solid #43a047;
+
+    color:#1b5e20;
+
+}
+
+.result-invalid{
+
+    background:#fff3e0;
+
+    border:
+    2px solid #fb8c00;
+
+    color:#e65100;
+
+}
+
+.result-unclear{
+
+    background:#fffde7;
+
+    border:
+    2px solid #f9a825;
+
+    color:#6d4c41;
+
+}
+
+.confidence{
+
+    margin-top:15px;
+
+    background:white;
+
+    border-radius:12px;
+
+    padding:12px;
+
+    color:#333;
+
+}
+
+.confidence-bar{
+
+    width:100%;
+
+    height:12px;
+
+    background:#ddd;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin-top:8px;
+
+}
+
+.confidence-fill{
+
+    width:0%;
+
+    height:100%;
+
+    background:#1976d2;
+
+    transition:
+    width .5s;
+
+}
+
+.lines-preview{
+
+    margin-top:15px;
+
+    background:white;
+
+    border-radius:12px;
+
+    padding:12px;
+
+    color:#333;
+
+}
+
+.line-row{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:8px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.line-row:last-child{
+
+    border-bottom:none;
+
+}
+
+.line-indicator{
+
+    width:15px;
+
+    height:15px;
+
+    border-radius:50%;
+
+    display:inline-block;
+
+    margin-left:6px;
+
+}
+
+.detected{
+
+    background:#43a047;
+
+}
+
+.not-detected{
+
+    background:#bdbdbd;
+
+}
+
+.history-item{
+
+    padding:14px 5px;
+
+    border-bottom:
+    1px solid #e0e0e0;
+
+}
+
+.history-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.history-date{
+
+    color:#777;
+
+    font-size:12px;
+
+    margin-top:5px;
+
+}
+
+.history-status{
+
+    font-weight:bold;
+
+    margin-top:5px;
+
+}
+
+.empty{
+
+    text-align:center;
+
+    color:#777;
+
+    padding:20px 5px;
+
+}
+
+.footer{
+
+    text-align:center;
+
+    color:#777;
+
+    font-size:12px;
+
+    line-height:1.8;
+
+    padding:10px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>🧪 فحص الحمل الذكي</h1>
+
+    <p>
+        تحليل صورة اختبار الحمل المنزلي
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- معلومات الاستخدام -->
+
+    <div class="card">
+
+        <div class="info">
+
+            <b>📌 طريقة الاستخدام</b>
+
+            <br>
+
+            1. استخدمي اختبار حمل منزلي حقيقي.
+
+            <br>
+
+            2. انتظري المدة المحددة في تعليمات الاختبار.
+
+            <br>
+
+            3. صوري الشريط في إضاءة جيدة.
+
+            <br>
+
+            4. اجعلي شريط الاختبار ظاهرًا بالكامل.
+
+        </div>
+
+
+        <div class="warning">
+
+            ⚠️ التطبيق لا يستطيع اكتشاف الحمل من
+            كاميرا الهاتف وحدها. التحليل يعتمد على
+            قراءة صورة اختبار حمل حقيقي.
+
+        </div>
+
+    </div>
+
+
+
+    <!-- اختيار الصورة -->
+
+    <div class="card">
+
+        <h2>
+            📷 تصوير الاختبار
+        </h2>
+
+
+        <button
+            class="btn-camera"
+            onclick="openCamera()">
+
+            📷 فتح الكاميرا
+
+        </button>
+
+
+        <button
+            class="btn-gallery"
+            onclick="openGallery()">
+
+            🖼️ اختيار صورة من الهاتف
+
+        </button>
+
+
+        <input
+            id="cameraInput"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onchange="loadImage(event)">
+
+
+        <input
+            id="galleryInput"
+            type="file"
+            accept="image/*"
+            onchange="loadImage(event)">
+
+
+        <!-- معاينة -->
+
+        <div
+            id="previewBox"
+            class="preview-box">
+
+            <span
+                class="preview-label">
+
+                صورة الاختبار
+
+            </span>
+
+            <img
+                id="preview"
+                alt="صورة اختبار الحمل">
+
+        </div>
+
+
+        <button
+            id="analyzeButton"
+            class="btn-analyze"
+            onclick="startAnalysis()"
+            disabled>
+
+            🔍 تحليل الصورة
+
+        </button>
+
+
+        <button
+            class="btn-reset"
+            onclick="resetTest()">
+
+            🔄 اختبار جديد
+
+        </button>
+
+    </div>
+
+
+
+    <!-- التحميل -->
+
+    <div
+        id="loading"
+        class="card loading">
+
+        <div class="spinner"></div>
+
+        <p>
+            جاري تحليل الصورة...
+        </p>
+
+        <p class="small">
+
+            يتم فحص الإضاءة ومنطقة الاختبار
+            وخطّي C و T
+
+        </p>
+
+    </div>
+
+
+
+    <!-- النتيجة -->
+
+    <div
+        id="result"
+        class="result">
+
+    </div>
+
+
+
+    <!-- سجل الفحوصات -->
+
+    <div class="card">
+
+        <h2>
+            📋 سجل الفحوصات
+        </h2>
+
+        <div id="history">
+
+            <div class="empty">
+
+                لا توجد فحوصات محفوظة.
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="btn-reset"
+            onclick="clearHistory()">
+
+            🗑️ حذف سجل الفحوصات
+
+        </button>
+
+    </div>
+
+
+
+    <!-- معلومات -->
+
+    <div class="card">
+
+        <h2>
+            ℹ️ معلومات مهمة
+        </h2>
+
+        <p class="small">
+
+            خط C هو خط التحكم في الاختبار.
+            عدم ظهوره يعني عادةً أن الاختبار غير صالح.
+
+        </p>
+
+        <p class="small">
+
+            وجود C و T قد يشير إلى نتيجة إيجابية،
+            حتى إذا كان خط T خفيفًا، ويجب تأكيد النتيجة
+            وفق تعليمات الاختبار أو بواسطة اختبار طبي.
+
+        </p>
+
+        <p class="small">
+
+            اختلاف أنواع اختبارات الحمل وألوانها
+            وإضاءة الصورة قد يؤثر على التحليل.
+
+        </p>
+
+    </div>
+
+
+</div>
+
+
+<div class="footer">
+
+    فحص الحمل الذكي
+
+    <br>
+
+    أداة مساعدة لقراءة صورة الاختبار وليست
+    تشخيصًا طبيًا.
+
+</div>
+
+
+
+<!-- لوحة الرسم مخفية للتحليل -->
+
+<canvas id="canvas"></canvas>
+
+
+<script>
+
+/* =========================================
+   المتغيرات
+========================================= */
+
+let selectedImage = null;
+
+let originalImageData = null;
+
+let currentAnalysis = null;
+
+
+/* =========================================
+   فتح الكاميرا
+========================================= */
+
+function openCamera(){
+
+    const input =
+        document.getElementById(
+            "cameraInput"
+        );
+
+    input.value = "";
+
+    input.click();
+
+}
+
+
+/* =========================================
+   فتح معرض الصور
+========================================= */
+
+function openGallery(){
+
+    const input =
+        document.getElementById(
+            "galleryInput"
+        );
+
+    input.value = "";
+
+    input.click();
+
+}
+
+
+/* =========================================
+   تحميل الصورة
+========================================= */
+
+function loadImage(event){
+
+    const file =
+        event.target.files[0];
+
+    if(!file){
+
+        return;
+
+    }
+
+
+    if(
+        !file.type ||
+        !file.type.startsWith("image/")
+    ){
+
+        alert(
+            "يرجى اختيار صورة صحيحة."
+        );
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+    function(e){
+
+        const image =
+            new Image();
+
+
+        image.onload =
+        function(){
+
+            selectedImage =
+                image;
+
+
+            originalImageData =
+                e.target.result;
+
+
+            const preview =
+                document.getElementById(
+                    "preview"
+                );
+
+
+            preview.src =
+                e.target.result;
+
+
+            document.getElementById(
+                "previewBox"
+            ).style.display =
+                "block";
+
+
+            document.getElementById(
+                "analyzeButton"
+            ).disabled =
+                false;
+
+
+            document.getElementById(
+                "result"
+            ).style.display =
+                "none";
+
+
+            window.scrollTo({
+
+                top:
+                document.getElementById(
+                    "previewBox"
+                ).offsetTop - 20,
+
+                behavior:"smooth"
+
+            });
+
+        };
+
+
+        image.onerror =
+        function(){
+
+            alert(
+                "تعذر قراءة الصورة."
+            );
+
+        };
+
+
+        image.src =
+            e.target.result;
+
+    };
+
+
+    reader.readAsDataURL(file);
+
+}
+
+
+/* =========================================
+   بدء التحليل
+========================================= */
+
+function startAnalysis(){
+
+    if(!selectedImage){
+
+        alert(
+            "يرجى اختيار صورة الاختبار أولاً."
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "result"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "analyzeButton"
+    ).disabled =
+        true;
+
+
+    /*
+      سيتم تشغيل محرك التحليل
+      المتقدم في الجزء الثاني.
+    */
+
+    setTimeout(
+        function(){
+
+            try{
+
+                currentAnalysis =
+                    advancedImageAnalysis(
+                        selectedImage
+                    );
+
+
+                displayResult(
+                    currentAnalysis
+                );
+
+
+            }catch(error){
+
+                console.error(error);
+
+
+                displayResult({
+
+                    type:"unclear",
+
+                    title:
+                    "تعذر تحليل الصورة",
+
+                    message:
+                    "الصورة غير مناسبة للتحليل. حاول التقاط صورة أوضح."
+
+                });
+
+            }
+
+
+            document.getElementById(
+                "loading"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "analyzeButton"
+            ).disabled =
+                false;
+
+
+        },
+        700
+    );
+
+}
+
+
+/* =========================================
+   سيتم استبدال هذه الدالة في الجزء الثاني
+========================================= */
+
+function advancedImageAnalysis(image){
+
+    /*
+      محرك التحليل المتقدم
+      سيضاف في الجزء الثاني.
+    */
+
+    return {
+
+        type:"unclear",
+
+        title:
+        "النتيجة غير واضحة",
+
+        message:
+        "يرجى استخدام صورة واضحة لشريط الاختبار."
+
+    };
+
+}
+
+
+/* =========================================
+   عرض النتيجة
+========================================= */
+
+function displayResult(data){
+
+    const box =
+        document.getElementById(
+            "result"
+        );
+
+
+    box.className =
+        "result result-" +
+        data.type;
+
+
+    let icon = "🟡";
+
+
+    if(data.type === "positive"){
+
+        icon = "🔴";
+
+    }
+    else if(data.type === "negative"){
+
+        icon = "🟢";
+
+    }
+    else if(data.type === "invalid"){
+
+        icon = "🟠";
+
+    }
+
+
+    let confidenceHTML = "";
+
+
+    if(
+        typeof data.confidence ===
+        "number"
+    ){
+
+        const confidence =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    data.confidence
+                )
+            );
+
+
+        confidenceHTML = `
+
+            <div class="confidence">
+
+                <b>
+                    درجة وضوح التحليل:
+                    ${confidence}%
+                </b>
+
+                <div
+                    class="confidence-bar">
+
+                    <div
+                        class="confidence-fill"
+                        style="width:${confidence}%">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    let linesHTML = "";
+
+
+    if(data.lines){
+
+        linesHTML = `
+
+            <div class="lines-preview">
+
+                <div class="line-row">
+
+                    <span>
+                        <span class="
+                            line-indicator
+                            ${
+                                data.lines.C
+                                ?
+                                "detected"
+                                :
+                                "not-detected"
+                            }
+                        "></span>
+
+                        خط التحكم C
+
+                    </span>
+
+                    <b>
+                        ${
+                            data.lines.C
+                            ?
+                            "مكتشف"
+                            :
+                            "غير مكتشف"
+                        }
+                    </b>
+
+                </div>
+
+
+                <div class="line-row">
+
+                    <span>
+
+                        <span class="
+                            line-indicator
+                            ${
+                                data.lines.T
+                                ?
+                                "detected"
+                                :
+                                "not-detected"
+                            }
+                        "></span>
+
+                        خط الاختبار T
+
+                    </span>
+
+                    <b>
+
+                        ${
+                            data.lines.T
+                            ?
+                            "مكتشف"
+                            :
+                            "غير مكتشف"
+                        }
+
+                    </b>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    box.innerHTML = `
+
+        <h2>
+
+            ${icon}
+
+            ${data.title}
+
+        </h2>
+
+
+        <p>
+
+            ${data.message}
+
+        </p>
+
+
+        ${confidenceHTML}
+
+        ${linesHTML}
+
+
+        <div class="warning">
+
+            ⚠️ هذه النتيجة مساعدة لقراءة الصورة
+            وليست تشخيصًا طبيًا.
+
+        </div>
+
+    `;
+
+
+    box.style.display =
+        "block";
+
+
+    saveHistory(data);
+
+
+    setTimeout(
+        function(){
+
+            box.scrollIntoView({
+
+                behavior:"smooth",
+
+                block:"center"
+
+            });
+
+        },
+        100
+    );
+
+}
+
+
+/* =========================================
+   حفظ السجل
+========================================= */
+
+function saveHistory(data){
+
+    let history =
+        JSON.parse(
+            localStorage.getItem(
+                "pregnancy_history_v2"
+            ) || "[]"
+        );
+
+
+    const record = {
+
+        title:
+        data.title || "",
+
+        type:
+        data.type || "unclear",
+
+        confidence:
+        data.confidence || 0,
+
+        date:
+        new Date().toLocaleString(
+            "ar"
+        )
+
+    };
+
+
+    history.unshift(record);
+
+
+    history =
+        history.slice(0,30);
+
+
+    localStorage.setItem(
+
+        "pregnancy_history_v2",
+
+        JSON.stringify(history)
+
+    );
+
+
+    displayHistory();
+
+}
+
+
+/* =========================================
+   عرض السجل
+========================================= */
+
+function displayHistory(){
+
+    const container =
+        document.getElementById(
+            "history"
+        );
+
+
+    let history =
+        JSON.parse(
+            localStorage.getItem(
+                "pregnancy_history_v2"
+            ) || "[]"
+        );
+
+
+    if(
+        !history ||
+        history.length === 0
+    ){
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                لا توجد فحوصات محفوظة.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    history.forEach(
+        function(item){
+
+            let icon = "🟡";
+
+
+            if(
+                item.type ===
+                "positive"
+            ){
+
+                icon = "🔴";
+
+            }
+            else if(
+                item.type ===
+                "negative"
+            ){
+
+                icon = "🟢";
+
+            }
+            else if(
+                item.type ===
+                "invalid"
+            ){
+
+                icon = "🟠";
+
+            }
+
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "history-item";
+
+
+            div.innerHTML = `
+
+                <div>
+
+                    ${icon}
+
+                    <b>
+                        ${item.title}
+                    </b>
+
+                </div>
+
+
+                <div
+                    class="history-status">
+
+                    درجة الوضوح:
+                    ${item.confidence || 0}%
+
+                </div>
+
+
+                <div
+                    class="history-date">
+
+                    ${item.date}
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   حذف السجل
+========================================= */
+
+function clearHistory(){
+
+    const ok =
+        confirm(
+            "هل تريد حذف جميع نتائج الفحوصات؟"
+        );
+
+
+    if(!ok){
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        "pregnancy_history_v2"
+    );
+
+
+    displayHistory();
+
+}
+
+
+/* =========================================
+   إعادة الاختبار
+========================================= */
+
+function resetTest(){
+
+    selectedImage = null;
+
+    originalImageData = null;
+
+    currentAnalysis = null;
+
+
+    const preview =
+        document.getElementById(
+            "preview"
+        );
+
+
+    preview.src = "";
+
+
+    document.getElementById(
+        "previewBox"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "analyzeButton"
+    ).disabled =
+        true;
+
+
+    document.getElementById(
+        "result"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "cameraInput"
+    ).value = "";
+
+
+    document.getElementById(
+        "galleryInput"
+    ).value = "";
+
+}
+
+
+/* =========================================
+   تشغيل السجل
+========================================= */
+
+displayHistory();
+
+</script>
+
+</body>
+
+</html>
